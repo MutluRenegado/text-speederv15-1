@@ -1,0 +1,48 @@
+text-speederv15-1/
+├── src/
+│   ├── firebase/
+│   │   ├── firebaseConfig.js         # Firebase setup & Firestore export
+│   │   └── firestore.rules           # Firestore security rules (optional)
+│   │
+│   ├── services/
+│   │   ├── userService.js            # CRUD for /users
+│   │   ├── textService.js            # CRUD for /texts
+│   │   ├── sessionService.js         # CRUD for /users/{userId}/readingSessions
+│   │   └── leaderboardService.js     # CRUD for /leaderboards
+│   │
+│   ├── hooks/
+│   │   ├── useAuth.js                # Manage Firebase Auth state
+│   │   ├── useUserData.js            # Fetch user profile + stats
+│   │   ├── useTexts.js               # Fetch training texts
+│   │   └── useSession.js             # Handle reading sessions
+│   │
+│   ├── types/
+│   │   └── firestoreModels.js        # Define Firestore data models
+│   │
+│   ├── utils/
+│   │   ├── calculateWPM.js           # Compute words per minute
+│   │   ├── formatTime.js             # Format timers and durations
+│   │   └── constants.js              # Static text categories, difficulties, etc.
+│   │
+│   ├── components/
+│   │   ├── TextReader.js             # Displays text to user with speed controls
+│   │   ├── SpeedMeter.js             # Real-time WPM visualization
+│   │   ├── ProgressBar.js
+│   │   └── UI/
+│   │       ├── Button.js
+│   │       └── Card.js
+│   │
+│   ├── screens/
+│   │   ├── HomeScreen.js
+│   │   ├── ReadingSessionScreen.js
+│   │   ├── ResultsScreen.js
+│   │   ├── ProfileScreen.js
+│   │   └── LeaderboardScreen.js
+│   │
+│   ├── App.js
+│   └── main.js
+│
+├── firebase.json
+├── .firebaserc
+├── package.json
+└── README.md

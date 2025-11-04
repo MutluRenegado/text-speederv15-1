@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TextSpeeder Firebase Auth + Firestore Test</title>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 2rem;">
+  <h1>🚀 TextSpeeder Firebase Test</h1>
+  <p>Use the buttons below to test Firebase Auth and Firestore. Open the browser console (F12 → Console tab) to see results.</p>
+
+  <h2>🔐 Authentication Test</h2>
+  <input id="email" type="email" placeholder="Email" />
+  <input id="password" type="password" placeholder="Password" />
+  <button id="signupBtn">Sign Up</button>
+  <button id="loginBtn">Login</button>
+  <button id="logoutBtn">Logout</button>
+
+  <h2>💾 Firestore Test</h2>
+  <button id="firestoreBtn">Run Firestore Test</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { 
+      getFirestore, collection, addDoc, getDocs 
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import {
+      getAuth, createUserWithEmailAndPassword,
+      signInWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+    // Your Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpqJ9_ERMtXUrS5yf8fUEKgf3H9CyxXhA",
+      authDomain: "textspeeder.firebaseapp.com",
+      projectId: "textspeeder",
+      storageBucket: "textspeeder.appspot.com",
+      messagingSenderId: "709996309097",
+      appId: "1:709996309097:web:59b3f5c5e66ccaf26390f8"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    console.log("✅ Firebase initialized:", app.name);
+
+    // --- AUTH TEST FUNCTIONS ---
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+
+    document.getElementById("signupBtn").addEventListener("click", async () => {
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth, emailInput.value, passwordInput.value
+        );
+        console.log("✅ User signed up:", userCredential.user.email);
+      } catch (err) {
+        console.error("❌ Signup error:", err.message);
+      }
+    });
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth, emailInput.value, passwordInput.value
+        );
+        console.log("✅ User logged in:", userCredential.user.email);
+      } catch (err) {
+        console.error("❌ Login error:", err.message);
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      console.log("👋 User logged out");
+    });
+
+    // Track auth state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("👤 Auth state: logged in as", user.email);
+      } else {
+        console.log("🚪 Auth state: no user logged in");
+      }
+    });
+
+    // --- FIRESTORE TEST ---
+    document.getElementById("firestoreBtn").addEventListener("click", async () => {
+      try {
+        const docRef = await addDoc(collection(db, "testCollection"), {
+          text: "Hello from TextSpeeder!",
+          timestamp: new Date().toISOString()
+        });
+        console.log("✅ Added document ID:", docRef.id);
+
+        const querySnapshot = await getDocs(collection(db, "testCollection"));
+        querySnapshot.forEach((doc) => {
+          console.log("📄", doc.id, "=>", doc.data());
+        });
+      } catch (err) {
+        console.error("❌ Firestore test failed:", err);
+      }
+    });
+  </script>
+</body>
+</html>

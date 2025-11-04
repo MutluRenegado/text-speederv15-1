@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Text Speeder v10.1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Text Speeder v10.1 – speed reading app with RSVP and Flow modes." />
+
+<!-- ===============================
+     ✅ Consent Mode Initialization
+=============================== -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+
+  const savedConsent = localStorage.getItem('consentMode');
+
+  if (!savedConsent) {
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
+      analytics_storage: 'denied',
+      personalization_storage: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted',
+      wait_for_update: 500
+    });
+  } else {
+    gtag('consent', 'default', JSON.parse(savedConsent));
+  }
+
+  function acceptConsent() {
+    const consentObject = {
+      ad_storage: 'granted',
+      ad_user_data: 'granted',
+      ad_personalization: 'granted',
+      analytics_storage: 'granted',
+      personalization_storage: 'granted',
+      functionality_storage: 'granted',
+      security_storage: 'granted'
+    };
+    gtag('consent', 'update', consentObject);
+    localStorage.setItem('consentMode', JSON.stringify(consentObject));
+  }
+</script>
+
+<!-- ===============================
+     ✅ Google Tag Manager Loader
+=============================== -->
+<script>
+(function(w,d,s,l,i){
+  w[l]=w[l]||[];
+  w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});
+  var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),
+      dl=l!='dataLayer'?'&l='+l:'';
+  j.async=true;
+  j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
+  f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-55TQQD24');
+</script>
+<!-- End Google Tag Manager -->
+
+
+<!-- ✅ Load latest stable PDF.js build -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  const pdfjsLib = window['pdfjsLib'];
+  if (pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    console.log("✅ PDF.js v3.11.174 initialized");
+  } else {
+    console.warn("⚠️ PDF.js failed to load");
+  }
+</script>
+
+<!-- ✅ Load Mammoth.js for DOCX support -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.5.1/mammoth.browser.min.js"></script>
+  <!-- Fonts and CSS -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Kalam&family=Playfair+Display&family=Quatracento+Sans&family=Spectral&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+
+<body data-theme="dark">
+  <div class="container" id="mainContainer">
+    <h1>Text Speeder v10.1</h1>
+
+ <!-- Top Controls -->
+<div class="top-bar">
+  <!-- Left side: file upload -->
+  <div class="top-left">
+    <label id="fileLabel" for="fileInput">
+      📂 No file chosen — accepted: .txt, .pdf, .doc, .docx
+    </label>
+    <input
+      type="file"
+      id="fileInput"
+      accept=".txt,.pdf,.doc,.docx"
+      aria-label="Upload text file"
+      style="display:none;">
+  </div>
+
+  <!-- Right side: buttons -->
+  <div class="top-right">
+    <button id="loadBtn">Load</button>
+    <button id="themeBtn" aria-label="Toggle theme">Dark / Light</button>
+    <span id="accessibilityStatus" style="font-size:13px;opacity:.8;margin-left:6px;">
+      (Default)
+    </span>
+  </div>
+</div>
+
+
+    <!-- Text Area -->
+    <textarea id="textInput" rows="8" aria-label="Text input">
+Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+    </textarea>
+
+    <!-- Reader Controls -->
+    <div class="control-group">
+      <div>
+        <label for="modeSelect">Mode</label>
+        <select id="modeSelect">
+          <option value="flow">Flow Only</option>
+          <option value="flow-highlight">Flow + Highlight</option>
+          <option value="rsvp">RSVP</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="fontType">Font Type</label>
+        <select id="fontType">
+          <option value="Arial, sans-serif" selected>Default</option>
+          <option value="'Spectral', sans-serif">Regular</option>
+          <option value="'Kalam', cursive">Handwriting</option>
+          <option value="'Quatracento Sans', sans-serif">Sans</option>
+          <option value="'Playfair Display', serif">Sans Serif</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="fontSize">Font Size</label>
+        <select id="fontSize">
+          <option value="16">Small</option>
+          <option value="20" selected>Medium</option>
+          <option value="26">Large</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="fontColor">Font Color</label>
+        <select id="fontColor">
+          <option value="#ffffff">White</option>
+          <option value="#000000">Black</option>
+          <option value="#00ff00">Green</option>
+          <option value="#ff0000">Red</option>
+          <option value="#00bfff">Blue</option>
+          <option value="#ffff00">Yellow</option>
+        </select>
+      </div>
+<div>
+  <label for="bgColor">Flow Background</label>
+  <select id="bgColor">
+    <option value="#000000">Black</option>
+    <option value="#1a1a1a" selected>Dark Gray</option>
+    <option value="#333333">Gray</option>
+    <option value="#004466">Deep Blue</option>
+    <option value="#660000">Dark Red</option>
+  </select>
+</div>
+
+
+      <div>
+        <label for="wpmInput">WPM</label>
+        <input type="number" id="wpmInput" min="50" max="1000" value="200">
+      </div>
+
+      <div>
+        <label for="wpmSlider">Speed Slider</label>
+        <input type="range" id="wpmSlider" min="50" max="1000" value="200">
+      </div>
+    </div>
+
+    <!-- Flow Screen -->
+    <div id="flowScreen" class="marquee-viewport">
+      <div class="flow-line left-2"></div>
+      <div class="flow-line left-1"></div>
+      <div class="flow-line right-1"></div>
+      <div class="flow-line right-2"></div>
+      <div class="flow-line right-3"></div>
+      <div class="marquee-track" id="marquee"></div>
+    </div>
+
+    <!-- RSVP Screen -->
+    <div id="rsvpScreen" class="marquee-rsvp">
+      <div class="rsvp-line left"></div>
+      <div class="word active" id="rsvpWord"></div>
+      <div class="rsvp-line right"></div>
+    </div>
+
+    <!-- Playback Buttons -->
+    <div class="playback-buttons">
+      <button id="pauseBtn">Pause</button>
+      <button id="startOverBtn">Start Over</button>
+      <button id="toggleLinesBtn">Hide Lines</button>
+      <button id="hideScreenBtn">Hide Screen</button>
+    </div>
+  </div>
+
+  <!-- ♿ Accessibility Sidebar -->
+  <div id="accessibilityFrame" class="accessibility-frame">
+    <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Open Accessibility Menu">
+  <img src="assets/handle/accessibility-handle.png" alt="Accessibility Handle" class="accessibility-icon">
+</button>
+
+    <div class="accessibility-panel">
+      <button id="closeAccessibility" class="close-btn" aria-label="Close Accessibility Menu">✖</button>
+      <h3>Accessibility Options</h3>
+      <button data-mode="accessible-mode">🟢 Accessible</button>
+      <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
+      <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
+      <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
+      <button id="resetAccessibility" class="reset">Reset</button>
+    </div>
+  </div>
+
+  <div id="accessibilityOverlay" class="accessibility-overlay"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <nav class="footer-links">
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
+      <span class="footer-divider">|</span>
+      <span class="footer-copy">© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span>
+      <span class="footer-divider">|</span>
+    </nav>
+  </footer>
+
+  <!-- Scripts -->
+
+
+<!-- 🚫 Suppress alerts safely (run last) -->
+<script>
+window.addEventListener("load", () => {
+  const originalAlert = window.alert;
+  window.alert = function(msg) {
+    console.log("(Suppressed alert):", msg);
+  };
+  console.log("✅ Alert suppression active");
+});
+</script>
+
+<!-- ✅ Cookie Consent Banner -->
+<div id="consentBanner" class="cookie-consent">
+  <p>🍪 This website uses cookies to enhance your experience.</p>
+  <div class="consent-buttons">
+    <button id="acceptCookies">Accept</button>
+    <button id="rejectCookies">Reject</button>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="app/consent.js" defer></script>
+<script src="app/main.js" defer></script>
+<script src="app/accessibility.js" defer></script>
+
+
+
+</body>
+</html>
+

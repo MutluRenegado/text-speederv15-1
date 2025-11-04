@@ -1,0 +1,12 @@
+textspeeder/
+│
+├── index.html
+├── style.css
+├── app/
+│   └── main.js
+├── assets/
+│   ├── logo.png
+│   ├── icons/
+│   │   └── accessibility.png
+│   └── backgrounds/
+│       └── dark-bg.jpg

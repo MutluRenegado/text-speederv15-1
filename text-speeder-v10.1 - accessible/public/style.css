@@ -1,0 +1,554 @@
+/* =======================================================
+   🎨 TEXT SPEEDER — CLEANED & FIXED STYLE
+   ======================================================= */
+
+/* ------------------ TOAST NOTIFICATION ------------------ */
+.toast-message {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  background: var(--accent);
+  color: #000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(15px) scale(0.98);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.2px;
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.toast-message.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+@keyframes toastFade {
+  0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+  20%, 80% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.95); }
+}
+
+.toast-message.fade {
+  animation: toastFade 2.6s ease-in-out forwards;
+}
+
+.toast-success { background: #00cc66; color: #fff; }
+.toast-warning { background: #ffcc00; color: #000; }
+.toast-error { background: #ff5555; color: #fff; }
+
+#accessibilityStatus {
+  font-weight: 700;
+  font-size: 14px;
+  margin-left: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.1);
+  color: var(--accent);
+  transition: color 0.3s ease, background 0.3s ease, opacity 0.3s ease;
+  opacity: 0.9;
+}
+
+/* ------------------ THEME VARIABLES ------------------ */
+:root {
+  --bg-color: #111;
+  --text-color: #fff;
+  --border: #444;
+  --input-bg: #ccc;
+  --input-text: #000;
+  --flow-bg: #000;
+  --accent: red;
+  --footer-color: #FFD700;
+  --footer-link-color: #FFD700;
+  --input-height: 130px;
+}
+
+[data-theme="light"] {
+  --bg-color: #f5f5f5;
+  --text-color: #000;
+  --border: #aaa;
+  --input-bg: #fff;
+  --input-text: #111;
+  --flow-bg: #f0f0f0;
+  --accent: #0077ff;
+  --footer-color: #000;
+  --footer-link-color: blue;
+}
+
+/* ------------------ BASE LAYOUT ------------------ */
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: "Arial", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 2rem;
+}
+
+.container {
+  width: 95%;
+  max-width: 900px;
+  text-align: center;
+  position: relative;
+  flex: 1 0 auto;
+  padding: 0 50px;      /* ✅ Adds 50 px padding left & right */
+  box-sizing: border-box;
+}
+
+/* ------------------ TOP BAR ------------------ */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 20px;   /* ✅ 20 px padding left & right */
+  box-sizing: border-box;
+}
+
+input[type="file"],
+button,
+select,
+input[type="number"],
+input[type="range"] {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: 2px solid var(--border);
+  background: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.25s ease;
+}
+
+input[type="file"]:hover,
+button:hover,
+select:hover,
+input[type="number"]:hover,
+input[type="range"]:hover {
+  background: var(--border);
+}
+
+/* ------------------ TEXT INPUT ------------------ */
+#textInput {
+  width: 100%;
+  height: var(--input-height);
+  padding: 10px 20px;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 2px solid var(--border);
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  resize: vertical;
+  white-space: pre-wrap;
+  overflow-x: hidden;
+}
+
+/* ------------------ FLOW & RSVP ------------------ */
+#flowScreen,
+#rsvpScreen {
+  width: 100%;
+  position: relative;
+  margin-top: 20px;
+  transition: opacity 0.3s ease, height 0.3s ease;
+}
+
+#rsvpScreen { display: none; }
+#rsvpScreen.active-screen { display: flex; }
+#flowScreen.active-screen { display: flex; }
+
+.marquee-viewport,
+.marquee-rsvp {
+  position: relative;
+  overflow: hidden;
+  height: var(--input-height);
+  border: 2px solid var(--border);
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  background: var(--flow-bg);
+}
+
+#rsvpWord {
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  min-width: 50px;
+}
+
+#marquee {
+  display: inline-block;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.flow-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.5;
+  pointer-events: auto;   /* ✅ allow mouse events */
+  z-index: 2;
+  cursor: ew-resize;      /* ✅ shows “drag left-right” cursor */
+}
+
+.flow-line.left-2 { left: 35%; }
+.flow-line.left-1 { left: 45%; }
+.flow-line.right-1 { left: 55%; }
+.flow-line.right-2 { left: 65%; }
+.flow-line.right-3 { left: 75%; }
+
+.word { display: inline-block; padding: 0 2px; }
+.word.active { background: #FFD580; color: #000; }
+
+/* ------------------ CONTROLS ------------------ */
+.control-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+/* 🎯 Center all playback buttons neatly under the reader */
+.playback-buttons {
+  display: flex;
+  justify-content: center;    /* ✅ Center horizontally */
+  align-items: center;        /* ✅ Align vertically */
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+  width: 100%;                /* ✅ Ensure full width for centering */
+  text-align: center;
+  z-index: 10;
+}
+
+.playback-buttons button {
+  background: var(--border);
+  color: var(--text-color);
+  border: 2px solid var(--border);
+  padding: 10px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+.playback-buttons button:hover {
+  background: var(--accent);
+  color: #000;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* 🎨 Individual Button Colors */
+#pauseBtn {
+  background: #ffcc00;
+  color: #000;
+}
+#pauseBtn:hover {
+  background: #ffd633;
+}
+
+#startOverBtn {
+  background: #d9534f;
+  color: #fff;
+}
+#startOverBtn:hover {
+  background: #ff6b66;
+}
+
+#loadBtn {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+#loadBtn:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* ------------------ FOOTER ------------------ */
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bg-color);
+  color: var(--footer-color);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
+  padding: 4px 8px;
+  line-height: 1;
+  z-index: 1000;
+  box-sizing: border-box;
+  backdrop-filter: blur(6px);
+  white-space: nowrap;
+  overflow-x: auto;
+}
+
+footer.footer .footer-links a {
+  color: var(--footer-link-color);
+  text-decoration: none;
+  margin: 0 6px;
+}
+footer.footer .footer-links a:hover { text-decoration: underline; }
+footer.footer .footer-divider { margin: 0 5px; opacity: 0.4; }
+
+
+
+/* ------------------  FOCUS MODE (Hide Screen) ------------------ */
+body.focus-mode .top-bar,
+body.focus-mode textarea,
+body.focus-mode footer.footer,
+body.focus-mode .control-group,
+body.focus-mode h1 {
+  display: none !important;
+}
+
+/* Hide both readers first */
+body.focus-mode #flowScreen,
+body.focus-mode #rsvpScreen {
+  display: none !important;
+  opacity: 0;
+}
+
+/* Only show and center the active reader screen */
+body.focus-mode #flowScreen.active-screen,
+body.focus-mode #rsvpScreen.active-screen {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  opacity: 1;
+  background: var(--flow-bg);
+  border: 2px solid var(--border);
+  z-index: 5;
+  transition: opacity 0.3s ease;
+}
+
+/* Playback buttons remain visible and centered at bottom */
+body.focus-mode .playback-buttons {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  position: fixed;
+  bottom: 40px;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  z-index: 10;
+}
+
+/* Optional: hide sidebar and overlay in focus mode */
+body.focus-mode #accessibilityFrame,
+body.focus-mode #accessibilityOverlay {
+  display: none !important;
+}
+
+
+/* ------------------ ACCESSIBILITY SIDEBAR ------------------ */
+.accessibility-frame {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 260px;
+  background: var(--bg-color);
+  border-left: 2px solid var(--border);
+  box-shadow: -4px 0 10px rgba(0, 0, 0, 0.3);
+  transform: translateX(100%);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 4000;
+}
+
+.accessibility-frame.open {
+  transform: translateX(0);
+}
+
+/* Sidebar Toggle Handle */
+.accessibility-toggle {
+  position: absolute;
+  left: -75px;
+  top: 40%;
+  width: 100px;
+  height: 100px;
+  border-radius: 14px 0 0 14px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.25s ease, background 0.25s ease;
+  z-index: 5000;
+}
+
+.accessibility-toggle:hover {
+  transform: scale(1.1);
+  background: #ffcc00;
+}
+
+.accessibility-icon {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+  transition: transform 0.25s ease;
+}
+
+.accessibility-toggle:hover .accessibility-icon {
+  transform: rotate(6deg) scale(1.1);
+}
+
+/* Accessibility Panel */
+.accessibility-panel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 10px;
+  position: relative;
+}
+
+.accessibility-panel h3 {
+  width: 100%;
+  text-align: left;
+  color: var(--text-color);
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.accessibility-panel button {
+  width: 100%;
+  text-align: left;
+  background: var(--border);
+  color: var(--text-color);
+  border: 2px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.accessibility-panel button:hover {
+  background: var(--accent);
+  color: #000;
+}
+
+.accessibility-panel .reset {
+  background: #d9534f;
+  color: #fff;
+  border: none;
+}
+
+.accessibility-panel .reset:hover {
+  background: #ff6b66;
+}
+
+/* Close Button */
+.close-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.close-btn:hover {
+  color: var(--accent);
+}
+
+/* Accessibility Modes */
+body.accessible-mode {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --border: #000000;
+  --accent: #ffcc00;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+
+body.colorblind-deuteranopia { --accent: #0066cc; }
+body.colorblind-protanopia { --accent: #00aaff; }
+body.colorblind-tritanopia { --accent: #ff6600; }
+
+/* ------------------ RESPONSIVE ------------------ */
+@media (max-height: 600px) {
+  .toast-message {
+    bottom: 60px;
+  }
+}
+
+#fileLabel {
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+
+#fileLabel:hover {
+  color: var(--accent);
+}
+
+#fileLabel input[type="file"] {
+  display: none; /* Hide native chooser */
+}
+
+
+/* === Right-Aligned Flow Start === */
+#flowScreen {
+  justify-content: flex-end; /* keep text start at right edge */
+}
+
+#marquee {
+  text-align: right;
+}
+
+
+.flow-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.6;
+  cursor: ew-resize; /* ✅ show draggable cursor */
+  user-select: none;
+}
+

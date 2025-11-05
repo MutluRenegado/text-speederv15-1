@@ -1,166 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⚡ TextSpeeder v10.1</title>
-  <meta
-    name="description"
-    content="TextSpeeder v10.1 – Speed reading app with accessibility, consent, and theme support."
-  />
-  <link rel="stylesheet" href="style.css" />
-</head>
+/* =======================================================
+   ⚡ TEXTSPEEDER BASE STYLES
+   ======================================================= */
+:root {
+  --accent: #0078ff;
+  --bg: #f9f9f9;
+  --text: #222;
+  --border: #ccc;
+}
 
-<body>
-  <!-- =======================================================
-       ⚡ MAIN APP INTERFACE
-       ======================================================= -->
-  <header class="top-bar">
-    <h1>⚡ TextSpeeder</h1>
-    <!-- 🌙 Theme Toggle Button -->
-    <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark/Light Mode"></button>
-  </header>
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, sans-serif;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease, filter 0.3s ease;
+}
 
-  <main class="content">
-    <textarea id="textInput" placeholder="Paste or load your text here..."></textarea>
+/* =======================================================
+   ⚡ HEADER / BANNER (Half Height)
+   ======================================================= */
+.top-bar {
+  background: var(--accent);
+  color: #fff;
+  padding: 6px 20px; /* Half original height */
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.3;
+  position: relative;
+}
 
-    <!-- 🎛️ Settings / Arrange Panel -->
-    <div class="settings-panel">
-      <label>Mode</label>
-      <select id="modeSelect">
-        <option value="flow">Flow Only</option>
-        <option value="rsvp">RSVP Mode</option>
-      </select>
+.theme-toggle {
+  position: absolute;
+  right: 20px;
+  top: 8px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.theme-toggle:hover {
+  background: #e0e0e0;
+}
 
-      <label>Font Type</label>
-      <select id="fontType">
-        <option value="default">Default</option>
-        <option value="serif">Serif</option>
-        <option value="sans-serif">Sans-serif</option>
-      </select>
+/* =======================================================
+   📝 CONTENT AREA
+   ======================================================= */
+.content {
+  padding: 20px;
+}
 
-      <label>Font Size</label>
-      <select id="fontSize">
-        <option value="small">Small</option>
-        <option value="medium" selected>Medium</option>
-        <option value="large">Large</option>
-      </select>
+textarea {
+  width: 100%;
+  height: 150px;
+  font-size: 16px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  resize: vertical;
+  color: var(--text);
+  background: #fff;
+}
 
-      <label>Font Color</label>
-      <select id="fontColor">
-        <option value="white">White</option>
-        <option value="black">Black</option>
-        <option value="yellow">Yellow</option>
-      </select>
+/* =======================================================
+   🎛️ SETTINGS PANEL
+   ======================================================= */
+.settings-panel {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin: 14px 0;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px;
+  border-radius: 10px;
+}
 
-      <label>Background</label>
-      <select id="bgColor">
-        <option value="darkgray" selected>Dark Gray</option>
-        <option value="lightgray">Light Gray</option>
-        <option value="black">Black</option>
-      </select>
+.settings-panel label {
+  font-size: 0.85rem;
+  color: var(--text);
+}
 
-      <label>WPM</label>
-      <input type="number" id="wpmInput" value="200" min="100" max="1000" step="10" />
-    </div>
+.settings-panel select,
+.settings-panel input {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+  color: #000;
+  font-size: 0.9rem;
+}
 
-    <!-- 🎮 Playback Controls -->
-    <div class="controls">
-      <button id="loadBtn">Load</button>
-      <button id="pauseBtn">Pause</button>
-      <button id="startOverBtn">Restart</button>
-      <button id="toggleLinesBtn">Hide Lines</button>
-      <button id="hideScreenBtn">Hide Screen</button>
-    </div>
+/* =======================================================
+   🎮 PLAYBACK CONTROLS
+   ======================================================= */
+.controls {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
 
-    <section id="flowScreen" class="screen flow">
-      <div id="marquee"></div>
-    </section>
+.controls button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.controls button:hover {
+  background: #005fcc;
+  transform: scale(1.05);
+}
 
-    <section id="rsvpScreen" class="screen rsvp">
-      <div id="rsvpWord"></div>
-    </section>
-  </main>
+/* =======================================================
+   🖥️ DISPLAY SCREENS
+   ======================================================= */
+.screen {
+  margin-top: 20px;
+  min-height: 200px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  overflow: hidden;
+}
 
-  <!-- =======================================================
-       ♿ ACCESSIBILITY LAYER (With Custom Handle)
-       ======================================================= -->
-  <div id="accessibilityLayer">
-    <div id="accessibilityOverlay" class="accessibility-overlay"></div>
+.flow #marquee {
+  white-space: nowrap;
+  font-size: 1.2rem;
+}
 
-    <div id="accessibilityFrame" class="accessibility-frame">
-      <div class="accessibility-panel">
-        <button id="closeAccessibility" class="close-btn" aria-label="Close Accessibility Menu">✖</button>
-        <h3>Accessibility Options</h3>
+.rsvp #rsvpWord {
+  font-size: 32px;
+  text-align: center;
+  margin-top: 60px;
+}
 
-        <button data-mode="accessible-mode">🟢 Accessible Mode</button>
-        <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
-        <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
-        <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
+/* =======================================================
+   ♿ ACCESSIBILITY LAYER
+   ======================================================= */
+#accessibilityLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
 
-        <button id="resetAccessibility" class="reset-btn">Reset</button>
-        <p id="accessibilityStatus" class="status">Mode: Default</p>
-      </div>
-    </div>
+.accessibility-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: auto;
+  z-index: 10000;
+}
 
-    <!-- ♿ Custom Accessibility Handle Button -->
-    <button
-      id="accessibilityToggle"
-      class="accessibility-toggle"
-      aria-label="Open Accessibility Menu"
-    >
-      <img
-        src="assets/handle/accessibility-handle.png"
-        alt="Accessibility Handle"
-        class="accessibility-icon"
-      />
-    </button>
-  </div>
+.accessibility-frame {
+  position: fixed;
+  right: -260px;
+  top: 0;
+  width: 260px;
+  height: 100%;
+  background: #222;
+  color: #fff;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.5);
+  padding: 16px;
+  transition: right 0.35s ease-in-out;
+  pointer-events: auto;
+  z-index: 10001;
+}
+.accessibility-frame.open {
+  right: 0;
+}
 
-  <!-- =======================================================
-       🍪 CONSENT MANAGER (Final Layer)
-       ======================================================= -->
-  <div id="consentBanner" class="consent-banner">
-    <div class="consent-content">
-      <p>
-        We use cookies to enhance your experience, analyze usage, and connect
-        with Google Tag Manager (GTM). You can choose to accept or reject.
-      </p>
-      <div class="consent-buttons">
-        <button id="acceptCookies">Accept</button>
-        <button id="rejectCookies" class="reject">Reject</button>
-      </div>
-    </div>
-  </div>
+.accessibility-toggle {
+  position: fixed;
+  top: 45%;
+  right: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  z-index: 10002;
+  padding: 0;
+  margin: 0;
+}
+.accessibility-toggle .accessibility-icon {
+  width: 52px;
+  height: auto;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  transition: transform 0.3s ease;
+}
+.accessibility-toggle:hover .accessibility-icon {
+  transform: scale(1.1);
+}
 
-  <!-- =======================================================
-       🌐 FOOTER — TextSpeeder Docs & Links
-       ======================================================= -->
-  <footer class="footer">
-    <nav class="footer-links">
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
-      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
-      <span class="footer-divider">|</span>
-      <span class="footer-copy">© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span>
-    </nav>
-  </footer>
+.accessibility-panel button {
+  display: block;
+  width: 100%;
+  background: #333;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.accessibility-panel button:hover {
+  background: #444;
+}
 
-  <!-- =======================================================
-       📜 SCRIPTS
-       ======================================================= -->
-  <script src="accessibility.js"></script>
-  <script src="consent.js"></script>
-  <script>
-    // Automatically update footer year
-    document.getElementById("currentYear").textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+.close-btn {
+  float: right;
+  background: none;
+  color: #fff;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+}
+
+.reset-btn {
+  background: #c0392b;
+  margin-top: 12px;
+}
+.reset-btn:hover {
+  background: #e74c3c;
+}
+
+/* =======================================================
+   🍪 CONSENT BANNER
+   ======================================================= */
+.consent-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--bg);
+  color: var(--text);
+  border-top: 2px solid var(--accent);
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  padding: 16px 24px;
+  display: none;
+  z-index: 10050;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+  transform: translateY(100%);
+  opacity: 0;
+}
+
+.consent-banner.show {
+  display: block;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.consent-content {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.consent-buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.consent-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #fff;
+  background: var(--accent);
+  transition: 0.3s;
+}
+.consent-buttons button:hover {
+  opacity: 0.85;
+}
+
+.consent-buttons .reject {
+  background: #c0392b;
+}
+.consent-buttons .reject:hover {
+  background: #e74c3c;
+}
+
+body.dark-mode .consent-banner {
+  background: #1c1c1c;
+  color: #fff;
+  border-top: 2px solid var(--accent);
+}
+
+/* =======================================================
+   🌐 FOOTER
+   ======================================================= */
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 10px 0 14px 0;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-size: 14px;
+  position: relative;
+  z-index: 10;
+}
+
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  line-height: 1.6;
+}
+
+.footer-links a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.footer-links a:hover {
+  color: #ffcc00;
+}
+
+.footer-divider {
+  opacity: 0.4;
+  margin: 0 6px;
+}
+
+.footer-copy {
+  opacity: 0.7;
+}
+
+/* Dark mode footer */
+body.dark-mode .footer {
+  background: #111;
+  border-color: #333;
+  color: #ddd;
+}
+body.dark-mode .footer-links a {
+  color: #66b2ff;
+}
+body.dark-mode .footer-links a:hover {
+  color: #ffdf5e;
+}
+
+/* =======================================================
+   📱 RESPONSIVE FIXES
+   ======================================================= */
+@media (max-width: 600px) {
+  .settings-panel {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  textarea {
+    height: 120px;
+  }
+
+  .controls button {
+    width: 90%;
+  }
+
+  .top-bar h1 {
+    font-size: 1rem;
+  }
+}

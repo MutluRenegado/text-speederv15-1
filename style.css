@@ -1,7 +1,3 @@
-/* =======================================================
-   🎨 TEXT SPEEDER — BEAUTIFIED VISUAL STYLE
-   ======================================================= */
-
 :root {
   --bg-color: #0c0c0c;
   --panel-color: #141414;
@@ -22,46 +18,32 @@ body {
   font-family: var(--font-main);
   background: var(--bg-color);
   color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  overflow-x: hidden;
 }
 h1 {
-  font-size: 2rem;
-  text-align: center;
-  margin: 15px 0;
+  font-size: 1.6rem;
   color: var(--accent);
   text-shadow: 0 0 8px var(--accent-glow);
 }
 
-/* ---------- Top Bar ---------- */
+/* ---------- Header ---------- */
 .top-bar {
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 24px;
+  padding: 12px 24px;
   background: var(--panel-color);
   border-bottom: 1px solid var(--border);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-}
-#fileLabel {
-  font-weight: 600;
-  color: #eee;
-  cursor: pointer;
-}
-#fileLabel:hover {
-  color: var(--accent);
 }
 .top-right button {
+  background: #333;
   border: none;
+  color: #fff;
   border-radius: 6px;
   padding: 8px 16px;
   margin-left: 6px;
-  font-weight: 600;
-  color: #fff;
   cursor: pointer;
-  transition: 0.25s;
+  transition: 0.3s;
 }
 #loadBtn {
   background: var(--accent);
@@ -69,94 +51,56 @@ h1 {
 #loadBtn:hover {
   background: var(--accent-glow);
 }
-#themeBtn {
-  background: #333;
-}
 #themeBtn:hover {
   background: var(--accent);
 }
 
-/* ---------- Text Input ---------- */
+/* ---------- Main ---------- */
+.main-content {
+  text-align: center;
+  padding: 20px;
+}
+#fileLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #ccc;
+}
 #textInput {
-  width: 95%;
-  max-width: 900px;
-  height: 130px;
-  margin: 12px 0;
-  padding: 10px 16px;
-  border: 1px solid var(--border);
+  width: 90%;
+  height: 120px;
   border-radius: 8px;
+  border: 1px solid var(--border);
   background: var(--input-bg);
   color: var(--input-text);
-  resize: vertical;
-  font-size: 15px;
-  line-height: 1.4;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.25);
+  padding: 10px;
+  font-size: 16px;
+  resize: none;
 }
 
-/* ---------- Control Group ---------- */
+/* ---------- Control Panel ---------- */
 .control-group {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px 18px;
-  padding: 12px 0;
-  border-radius: 10px;
+  gap: 10px 16px;
   background: var(--panel-color);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 20px auto;
+  width: 85%;
 }
 .control-group label {
-  font-size: 0.9rem;
   color: #ccc;
+  font-size: 0.9rem;
 }
 .control-group select,
-.control-group input[type="number"],
-.control-group input[type="range"] {
+.control-group input {
   background: #1f1f1f;
   color: #fff;
   border: 1px solid #333;
   border-radius: 6px;
   padding: 6px 10px;
-}
-.control-group select:hover {
-  border-color: var(--accent);
-}
-
-/* ---------- Flow / RSVP screens ---------- */
-.marquee-viewport,
-.marquee-rsvp {
-  position: relative;
-  width: 95%;
-  max-width: 900px;
-  margin: 25px auto;
-  background: #000;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-}
-.flow-line {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--accent);
-  opacity: 0.4;
-  box-shadow: 0 0 6px var(--accent-glow);
-  transition: opacity 0.2s, box-shadow 0.3s;
-}
-.flow-line:hover {
-  opacity: 1;
-  box-shadow: 0 0 12px var(--accent-glow);
-}
-#marquee {
-  color: #fff;
-  white-space: nowrap;
-  padding: 15px;
-  font-size: 20px;
-}
-.word.active {
-  background: #ffd580;
-  color: #000;
 }
 
 /* ---------- Playback Buttons ---------- */
@@ -164,13 +108,13 @@ h1 {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 16px;
-  margin: 20px 0 40px 0;
+  gap: 12px;
+  margin: 16px 0;
 }
 .playback-buttons button {
   border: none;
-  border-radius: 10px;
-  padding: 10px 22px;
+  border-radius: 8px;
+  padding: 10px 20px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.25s;
@@ -181,7 +125,6 @@ h1 {
 }
 #pauseBtn:hover {
   background: #ffda44;
-  transform: translateY(-2px);
 }
 #startOverBtn {
   background: #e74c3c;
@@ -189,7 +132,6 @@ h1 {
 }
 #startOverBtn:hover {
   background: #ff6254;
-  transform: translateY(-2px);
 }
 #toggleLinesBtn,
 #hideScreenBtn {
@@ -199,34 +141,131 @@ h1 {
 #toggleLinesBtn:hover,
 #hideScreenBtn:hover {
   background: var(--accent);
-  color: #000;
+}
+
+/* ---------- Reading Screens ---------- */
+.marquee-viewport,
+.marquee-rsvp {
+  position: relative;
+  width: 90%;
+  margin: 20px auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #000;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+#marquee {
+  color: #fff;
+  padding: 20px;
+  white-space: nowrap;
+  font-size: 20px;
+  text-align: left;
+}
+.flow-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.4;
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+.flow-line:hover {
+  opacity: 1;
 }
 
 /* ---------- Footer ---------- */
-footer.footer {
+.footer {
+  text-align: center;
+  padding: 10px;
+  color: var(--footer-color);
+  background: rgba(20, 20, 20, 0.95);
+  border-top: 1px solid var(--border);
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: rgba(20, 20, 20, 0.85);
-  backdrop-filter: blur(6px);
-  border-top: 1px solid var(--border);
-  color: var(--footer-color);
-  text-align: center;
-  padding: 6px 10px;
-  font-size: 13px;
-  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.4);
+  font-size: 14px;
 }
-footer a {
+.footer a {
   color: var(--footer-link-color);
   text-decoration: none;
   margin: 0 6px;
 }
-footer a:hover {
+.footer a:hover {
   text-decoration: underline;
 }
 
-/* ---------- Accessibility Panel ---------- */
+/* ---------- Accessibility Sidebar ---------- */
+.accessibility-sidebar {
+  position: fixed;
+  top: 0;
+  right: -280px;
+  width: 280px;
+  height: 100%;
+  background: rgba(20, 20, 20, 0.96);
+  backdrop-filter: blur(8px);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.6);
+  color: #fff;
+  transition: right 0.4s ease;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+.accessibility-sidebar.open {
+  right: 0;
+}
+.accessibility-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--panel-color);
+}
+.accessibility-header h3 {
+  margin: 0;
+  color: var(--accent);
+  text-shadow: 0 0 6px var(--accent-glow);
+}
+.accessibility-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.accessibility-body button {
+  background: #2a2a2a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.accessibility-body button:hover {
+  background: var(--accent);
+  color: #000;
+}
+.reset-btn {
+  background: #e74c3c;
+}
+.reset-btn:hover {
+  background: #ff6b5b;
+}
+.close-btn {
+  background: none;
+  color: #aaa;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.close-btn:hover {
+  color: #fff;
+}
 .accessibility-toggle {
   position: fixed;
   right: 15px;
@@ -237,14 +276,65 @@ footer a:hover {
   border-radius: 14px;
   padding: 6px;
   cursor: pointer;
+  z-index: 10000;
   box-shadow: 0 0 12px var(--accent-glow);
-}
-.accessibility-icon {
-  width: 60px;
-  height: 60px;
-  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
 }
 .accessibility-toggle:hover {
   background: var(--accent-glow);
   transform: translateY(-50%) scale(1.05);
+}
+.accessibility-icon {
+  width: 52px;
+  height: auto;
+}
+
+/* =======================================================
+   📖 READING SCREEN VISIBILITY FIX
+   ======================================================= */
+
+.marquee-viewport,
+.marquee-rsvp {
+  position: relative;
+  display: none; /* Hide both by default */
+  width: 90%;
+  max-width: 1000px;
+  margin: 25px auto;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #000;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.05);
+  z-index: 5; /* Ensure visible above panels */
+  min-height: 220px;
+}
+
+/* Show the active screen */
+.marquee-viewport.active,
+.marquee-rsvp.active {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.4s ease-in-out;
+}
+
+/* Flow text area */
+#marquee {
+  white-space: nowrap;
+  font-size: 20px;
+  padding: 16px;
+  text-align: left;
+  color: #fff;
+}
+
+/* RSVP single word reader */
+#rsvpWord {
+  font-size: 2rem;
+  text-align: center;
+  margin-top: 80px;
+  letter-spacing: 1px;
+}
+
+/* Optional transition fade between screens */
+.hidden {
+  display: none !important;
 }

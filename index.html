@@ -4,7 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>⚡ TextSpeeder v10.1</title>
-  <meta name="description" content="TextSpeeder v10.1 – Speed reading app with accessibility and theme support." />
+  <meta
+    name="description"
+    content="TextSpeeder v10.1 – Speed reading app with accessibility, consent, and theme support."
+  />
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -58,7 +61,11 @@
     </div>
 
     <!-- ♿ Custom Accessibility Handle Button -->
-    <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Open Accessibility Menu">
+    <button
+      id="accessibilityToggle"
+      class="accessibility-toggle"
+      aria-label="Open Accessibility Menu"
+    >
       <img
         src="assets/handle/accessibility-handle.png"
         alt="Accessibility Handle"
@@ -73,8 +80,8 @@
   <div id="consentBanner" class="consent-banner">
     <div class="consent-content">
       <p>
-        We use cookies to enhance your experience, analyze usage, and connect with Google Tag Manager (GTM).
-        You can choose to accept or reject.
+        We use cookies to enhance your experience, analyze usage, and connect
+        with Google Tag Manager (GTM). You can choose to accept or reject.
       </p>
       <div class="consent-buttons">
         <button id="acceptCookies">Accept</button>
@@ -83,14 +90,34 @@
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- =======================================================
+       🌐 FOOTER — TextSpeeder Docs & Links
+       ======================================================= -->
+  <footer class="footer">
+    <nav class="footer-links">
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
+      <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
+      <span class="footer-divider">|</span>
+      <span class="footer-copy">© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span>
+    </nav>
+  </footer>
+
+  <!-- =======================================================
+       📜 SCRIPTS
+       ======================================================= -->
   <script src="accessibility.js"></script>
   <script src="consent.js"></script>
-</body>
-</html>
-
-  
-  <!-- JS -->
-  <script src="accessibility.js"></script>
+  <script>
+    // Automatically update footer year
+    document.getElementById("currentYear").textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>

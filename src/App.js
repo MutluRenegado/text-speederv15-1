@@ -6,12 +6,14 @@ import ResultsScreen from "./screens/ResultsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import LeaderboardScreen from "./screens/LeaderboardScreen";
 import { useAuth } from "./hooks/useAuth";
+import "./AppLayout.css"; // new CSS file for sidebar + layout styling
 
 export default function App() {
   // ---- Basic App State ----
   const [view, setView] = useState("home");
   const [activeText, setActiveText] = useState(null);
   const [lastSession, setLastSession] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { currentUser, loading } = useAuth();
 
@@ -32,10 +34,11 @@ export default function App() {
     );
   }
 
-  // ---- Navigation ----
+  // ---- Active Screen ----
+  let content;
   switch (view) {
     case "reading":
-      return (
+      content = (
         <ReadingSessionScreen
           text={activeText}
           onExit={() => setView("home")}
@@ -45,9 +48,10 @@ export default function App() {
           }}
         />
       );
+      break;
 
     case "results":
-      return (
+      content = (
         <ResultsScreen
           session={lastSession}
           text={activeText}
@@ -58,19 +62,18 @@ export default function App() {
           }}
         />
       );
+      break;
 
     case "profile":
-      return (
-        <ProfileScreen />
-      );
+      content = <ProfileScreen />;
+      break;
 
     case "leaderboard":
-      return (
-        <LeaderboardScreen onBack={() => setView("home")} />
-      );
+      content = <LeaderboardScreen onBack={() => setView("home")} />;
+      break;
 
     default:
-      return (
+      content = (
         <HomeScreen
           onStartReading={(text) => {
             setActiveText(text);
@@ -81,5 +84,31 @@ export default function App() {
         />
       );
   }
-}
 
+  // ---- Render with layout wrapper ----
+  return (
+    <div className="app-root">
+      {/* Sidebar Toggle */}
+      <button
+        className="sidebar-toggle"
+        onClick={() => setSidebarOpen((s) => !s)}
+      >
+        ☰ Menu
+      </button>
+
+      {/* Sidebar */}
+      <aside className={`sidebar ${sidebarOpen ? "" : "sidebar--closed"}`}>
+        <div className="sidebar-content">
+          <h2 className="sidebar-title">Navigation</h2>
+          <button onClick={() => setView("home")}>🏠 Home</button>
+          <button onClick={() => setView("profile")}>👤 Profile</button>
+          <button onClick={() => setView("leaderboard")}>🏆 Leaderboard</button>
+          <button onClick={() => setSidebarOpen(false)}>✖ Close</button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="main-container">{content}</main>
+    </div>
+  );
+}

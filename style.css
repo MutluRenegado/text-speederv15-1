@@ -1,20 +1,29 @@
 /* =======================================================
-   ⚡ TEXTSPEEDER BASE STYLES
+   ⚡ TEXTSPEEDER — COMPLETE FIXED STYLES
    ======================================================= */
 :root {
   --accent: #0078ff;
+  --accent-hover: #005fcc;
   --bg: #f9f9f9;
   --text: #222;
   --border: #ccc;
+  --card: #fff;
 }
 
+/* =======================================================
+   🧱 BASE
+   ======================================================= */
 body {
   margin: 0;
+  font-family: "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", Roboto, sans-serif;
   overflow-x: hidden;
-  transition: background 0.4s ease, color 0.4s ease, filter 0.3s ease;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+h1, h2, h3, p {
+  margin: 0;
 }
 
 /* =======================================================
@@ -23,11 +32,12 @@ body {
 .top-bar {
   background: var(--accent);
   color: #fff;
-  padding: 6px 20px; /* Half original height */
+  padding: 6px 20px; /* half of normal */
   text-align: center;
   font-size: 1.1rem;
   line-height: 1.3;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .theme-toggle {
@@ -40,53 +50,58 @@ body {
   width: 28px;
   height: 28px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.3s;
 }
 .theme-toggle:hover {
-  background: #e0e0e0;
+  background: #eee;
 }
 
 /* =======================================================
-   📝 CONTENT AREA
+   🧩 MAIN CONTENT AREA
    ======================================================= */
 .content {
   padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 textarea {
   width: 100%;
-  height: 150px;
-  font-size: 16px;
-  padding: 10px;
+  height: 160px;
+  padding: 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
   resize: vertical;
+  background: var(--card);
+  font-size: 16px;
   color: var(--text);
-  background: #fff;
 }
 
 /* =======================================================
-   🎛️ SETTINGS PANEL
+   🎛️ SETTINGS PANEL (Arrange Controls)
    ======================================================= */
 .settings-panel {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 12px;
   margin: 14px 0;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 10px;
+  background: rgba(255,255,255,0.15);
+  padding: 12px;
   border-radius: 10px;
+  border: 1px solid var(--border);
 }
 
 .settings-panel label {
   font-size: 0.85rem;
   color: var(--text);
+  font-weight: 600;
 }
 
 .settings-panel select,
 .settings-panel input {
-  padding: 5px 8px;
+  padding: 6px 8px;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: #fff;
@@ -95,28 +110,31 @@ textarea {
 }
 
 /* =======================================================
-   🎮 PLAYBACK CONTROLS
+   🎮 PLAYBACK BUTTONS
    ======================================================= */
 .controls {
-  margin-top: 10px;
+  margin: 18px 0;
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .controls button {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 8px 14px;
+  padding: 10px 16px;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 600;
+  font-size: 0.95rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: background 0.3s, transform 0.2s;
 }
+
 .controls button:hover {
-  background: #005fcc;
+  background: var(--accent-hover);
   transform: scale(1.05);
 }
 
@@ -128,24 +146,26 @@ textarea {
   min-height: 200px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 10px;
+  padding: 12px;
   background: #fff;
   overflow: hidden;
+  position: relative;
 }
 
 .flow #marquee {
   white-space: nowrap;
   font-size: 1.2rem;
+  line-height: 1.5;
 }
 
 .rsvp #rsvpWord {
-  font-size: 32px;
+  font-size: 2rem;
   text-align: center;
   margin-top: 60px;
 }
 
 /* =======================================================
-   ♿ ACCESSIBILITY LAYER
+   ♿ ACCESSIBILITY PANEL
    ======================================================= */
 #accessibilityLayer {
   position: fixed;
@@ -158,7 +178,7 @@ textarea {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(0,0,0,0.45);
   pointer-events: auto;
   z-index: 10000;
 }
@@ -171,15 +191,13 @@ textarea {
   height: 100%;
   background: #222;
   color: #fff;
-  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.5);
+  box-shadow: -4px 0 12px rgba(0,0,0,0.5);
   padding: 16px;
   transition: right 0.35s ease-in-out;
   pointer-events: auto;
   z-index: 10001;
 }
-.accessibility-frame.open {
-  right: 0;
-}
+.accessibility-frame.open { right: 0; }
 
 .accessibility-toggle {
   position: fixed;
@@ -190,50 +208,15 @@ textarea {
   cursor: pointer;
   pointer-events: auto;
   z-index: 10002;
-  padding: 0;
-  margin: 0;
 }
 .accessibility-toggle .accessibility-icon {
   width: 52px;
   height: auto;
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
-  transition: transform 0.3s ease;
+  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.4));
+  transition: transform 0.3s;
 }
 .accessibility-toggle:hover .accessibility-icon {
   transform: scale(1.1);
-}
-
-.accessibility-panel button {
-  display: block;
-  width: 100%;
-  background: #333;
-  color: #fff;
-  border: none;
-  padding: 8px;
-  margin: 6px 0;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.accessibility-panel button:hover {
-  background: #444;
-}
-
-.close-btn {
-  float: right;
-  background: none;
-  color: #fff;
-  font-size: 18px;
-  border: none;
-  cursor: pointer;
-}
-
-.reset-btn {
-  background: #c0392b;
-  margin-top: 12px;
-}
-.reset-btn:hover {
-  background: #e74c3c;
 }
 
 /* =======================================================
@@ -255,26 +238,22 @@ textarea {
   transform: translateY(100%);
   opacity: 0;
 }
-
 .consent-banner.show {
   display: block;
   transform: translateY(0);
   opacity: 1;
 }
-
 .consent-content {
   max-width: 800px;
   margin: 0 auto;
   text-align: center;
 }
-
 .consent-buttons {
   margin-top: 10px;
   display: flex;
   justify-content: center;
   gap: 12px;
 }
-
 .consent-buttons button {
   padding: 8px 16px;
   border: none;
@@ -285,22 +264,9 @@ textarea {
   background: var(--accent);
   transition: 0.3s;
 }
-.consent-buttons button:hover {
-  opacity: 0.85;
-}
-
-.consent-buttons .reject {
-  background: #c0392b;
-}
-.consent-buttons .reject:hover {
-  background: #e74c3c;
-}
-
-body.dark-mode .consent-banner {
-  background: #1c1c1c;
-  color: #fff;
-  border-top: 2px solid var(--accent);
-}
+.consent-buttons button:hover { opacity: 0.85; }
+.consent-buttons .reject { background: #c0392b; }
+.consent-buttons .reject:hover { background: #e74c3c; }
 
 /* =======================================================
    🌐 FOOTER
@@ -313,7 +279,6 @@ body.dark-mode .consent-banner {
   border-top: 1px solid var(--border);
   color: var(--text);
   font-size: 14px;
-  position: relative;
   z-index: 10;
 }
 
@@ -322,7 +287,7 @@ body.dark-mode .consent-banner {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   line-height: 1.6;
 }
 
@@ -331,21 +296,20 @@ body.dark-mode .consent-banner {
   text-decoration: none;
   transition: color 0.25s ease;
 }
+.footer-links a:hover { color: #ffcc00; }
 
-.footer-links a:hover {
-  color: #ffcc00;
+.footer-divider { opacity: 0.4; margin: 0 6px; }
+.footer-copy { opacity: 0.7; }
+
+/* =======================================================
+   🌙 DARK MODE
+   ======================================================= */
+body.dark-mode {
+  --bg: #1a1a1a;
+  --text: #f0f0f0;
+  --border: #444;
+  --card: #222;
 }
-
-.footer-divider {
-  opacity: 0.4;
-  margin: 0 6px;
-}
-
-.footer-copy {
-  opacity: 0.7;
-}
-
-/* Dark mode footer */
 body.dark-mode .footer {
   background: #111;
   border-color: #333;
@@ -359,23 +323,11 @@ body.dark-mode .footer-links a:hover {
 }
 
 /* =======================================================
-   📱 RESPONSIVE FIXES
+   📱 RESPONSIVE DESIGN
    ======================================================= */
-@media (max-width: 600px) {
-  .settings-panel {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  textarea {
-    height: 120px;
-  }
-
-  .controls button {
-    width: 90%;
-  }
-
-  .top-bar h1 {
-    font-size: 1rem;
-  }
+@media (max-width: 700px) {
+  textarea { height: 120px; }
+  .settings-panel { flex-direction: column; align-items: center; }
+  .controls button { width: 90%; }
+  .top-bar h1 { font-size: 1rem; }
 }

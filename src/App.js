@@ -107,6 +107,51 @@ export default function App() {
         </div>
       </aside>
 
+<script>
+  // Reader control buttons
+  const pauseBtn = document.getElementById("pauseBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const hideLinesBtn = document.getElementById("hideLinesBtn");
+  const hideScreenBtn = document.getElementById("hideScreenBtn");
+  const flowScreen = document.getElementById("flowScreen");
+  const rsvpScreen = document.getElementById("rsvpScreen");
+  const marquee = document.getElementById("marquee");
+  const rsvpWord = document.getElementById("rsvpWord");
+
+  // Pause toggle (example)
+  pauseBtn.addEventListener("click", () => {
+    document.body.classList.toggle("paused");
+    pauseBtn.textContent = document.body.classList.contains("paused")
+      ? "▶️ Resume"
+      : "⏸️ Pause";
+  });
+
+  // Restart (just resets both screens for now)
+  restartBtn.addEventListener("click", () => {
+    marquee.scrollLeft = 0;
+    rsvpWord.textContent = "Restarted!";
+    document.body.classList.remove("paused");
+    pauseBtn.textContent = "⏸️ Pause";
+  });
+
+  // Hide/Show lines
+  hideLinesBtn.addEventListener("click", () => {
+    document.body.classList.toggle("hide-lines");
+    hideLinesBtn.textContent = document.body.classList.contains("hide-lines")
+      ? "🧾 Show Lines"
+      : "🧾 Hide Lines";
+  });
+
+  // Hide/Show screen
+  hideScreenBtn.addEventListener("click", () => {
+    document.body.classList.toggle("hide-screen");
+    hideScreenBtn.textContent = document.body.classList.contains("hide-screen")
+      ? "🕳️ Show Screen"
+      : "🕳️ Hide Screen";
+  });
+</script>
+
+
       {/* Main Content Area */}
       <main className="main-container">{content}</main>
     </div>

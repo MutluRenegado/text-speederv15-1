@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>⚡ TextSpeeder v10.1</title>
+  <meta name="description" content="TextSpeeder v10.1 – Speed reading app with accessibility support." />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+
+<body data-theme="dark">
   <!-- =======================================================
        ⚡ MAIN APP INTERFACE
        ======================================================= -->
@@ -33,34 +35,37 @@
   </main>
 
   <!-- =======================================================
-       ♿ ACCESSIBILITY LAYER (Floating Overlay)
+       ♿ ACCESSIBILITY LAYER (With Handle Button)
        ======================================================= -->
   <div id="accessibilityLayer">
     <div id="accessibilityOverlay" class="accessibility-overlay"></div>
 
     <div id="accessibilityFrame" class="accessibility-frame">
-      <button id="closeAccessibility" class="close-btn" aria-label="Close Accessibility Menu">✖</button>
-      <h3>Accessibility Options</h3>
-
       <div class="accessibility-panel">
+        <button id="closeAccessibility" class="close-btn" aria-label="Close Accessibility Menu">✖</button>
+        <h3>Accessibility Options</h3>
+
         <button data-mode="accessible-mode">🟢 Accessible Mode</button>
         <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
         <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
         <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
-      </div>
 
-      <button id="resetAccessibility" class="reset-btn">Reset</button>
-      <p id="accessibilityStatus" class="status">Mode: Default</p>
+        <button id="resetAccessibility" class="reset-btn">Reset</button>
+        <p id="accessibilityStatus" class="status">Mode: Default</p>
+      </div>
     </div>
 
-    <button id="accessibilityToggle" class="accessibility-toggle" title="Accessibility Menu">
-      ♿
+    <!-- ✅ Custom Accessibility Handle Button -->
+    <button id="accessibilityToggle" class="accessibility-toggle" aria-label="Open Accessibility Menu">
+      <img
+        src="assets/handle/accessibility-handle.png"
+        alt="Accessibility Handle"
+        class="accessibility-icon"
+      />
     </button>
   </div>
 
-  <!-- =======================================================
-       🔧 Scripts
-       ======================================================= -->
+  <!-- JS -->
   <script src="accessibility.js"></script>
 </body>
 </html>

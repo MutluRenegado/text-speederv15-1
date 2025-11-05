@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TextSpeeder v10.1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 🔹 Main UI Container -->
+  <div id="appContainer">
+    <header class="top-bar">
+      <h1>⚡ TextSpeeder</h1>
+    </header>
+
+    <main class="content">
+      <textarea id="textInput" placeholder="Paste or load text here..."></textarea>
+
+      <div class="controls">
+        <button id="loadBtn">Load</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="startOverBtn">Restart</button>
+      </div>
+
+      <section id="flowScreen" class="screen flow">
+        <div id="marquee"></div>
+      </section>
+
+      <section id="rsvpScreen" class="screen rsvp">
+        <div id="rsvpWord"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- =======================================================
+       ♿ ACCESSIBILITY LAYER (Separate Overlay Plane)
+       ======================================================= -->
+  <div id="accessibilityLayer">
+    <div id="accessibilityOverlay" class="accessibility-overlay"></div>
+
+    <div id="accessibilityFrame" class="accessibility-frame">
+      <button id="closeAccessibility" class="close-btn" aria-label="Close Accessibility Menu">✖</button>
+      <h3>Accessibility Options</h3>
+
+      <div class="accessibility-panel">
+        <button data-mode="accessible-mode">🟢 Accessible Mode</button>
+        <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
+        <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
+        <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
+      </div>
+
+      <button id="resetAccessibility" class="reset-btn">Reset</button>
+      <p id="accessibilityStatus" class="status">Mode: Default</p>
+    </div>
+
+    <button id="accessibilityToggle" class="accessibility-toggle" title="Accessibility Menu">
+      ♿
+    </button>
+  </div>
+
+  <script src="accessibility.js"></script>
+</body>
+</html>
 

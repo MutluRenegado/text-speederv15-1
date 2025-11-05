@@ -88,7 +88,7 @@ button:hover {
 }
 
 /* Overlay */
-#accessibilityLayer .accessibility-overlay {
+.accessibility-overlay {
   display: none;
   position: fixed;
   inset: 0;
@@ -97,8 +97,8 @@ button:hover {
   z-index: 10000;
 }
 
-/* Sidebar Frame */
-#accessibilityLayer .accessibility-frame {
+/* Sidebar */
+.accessibility-frame {
   position: fixed;
   right: -260px;
   top: 0;
@@ -112,34 +112,36 @@ button:hover {
   pointer-events: auto;
   z-index: 10001;
 }
-
-#accessibilityLayer .accessibility-frame.open {
+.accessibility-frame.open {
   right: 0;
 }
 
-/* Toggle Button */
-#accessibilityLayer .accessibility-toggle {
+/* Floating Handle Button */
+.accessibility-toggle {
   position: fixed;
-  bottom: 25px;
-  right: 25px;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
+  top: 45%;
+  right: 0;
   border: none;
-  background: var(--accent);
-  color: #fff;
-  font-size: 28px;
+  background: transparent;
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   pointer-events: auto;
   z-index: 10002;
+  padding: 0;
+  margin: 0;
 }
-#accessibilityLayer .accessibility-toggle:hover {
-  background: #005fcc;
+.accessibility-toggle .accessibility-icon {
+  width: 52px;
+  height: auto;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  transition: transform 0.3s ease;
+}
+.accessibility-toggle:hover .accessibility-icon {
+  transform: scale(1.1);
 }
 
-/* Inside Panel */
+/* Inside Panel Buttons */
 .accessibility-panel button {
+  display: block;
   width: 100%;
   background: #333;
   color: #fff;
@@ -148,6 +150,7 @@ button:hover {
   margin: 6px 0;
   border-radius: 6px;
   cursor: pointer;
+  transition: 0.2s;
 }
 .accessibility-panel button:hover {
   background: #444;
@@ -179,8 +182,6 @@ button:hover {
 /* =======================================================
    ♿ ACCESSIBILITY COLOR THEMES
    ======================================================= */
-
-/* Accessible Mode */
 body.accessible-mode {
   --bg: #ffffff;
   --text: #000000;
@@ -189,7 +190,6 @@ body.accessible-mode {
   filter: none;
 }
 
-/* Deuteranopia Mode */
 body.colorblind-deuteranopia {
   --bg: #f9fafb;
   --text: #101010;
@@ -198,7 +198,6 @@ body.colorblind-deuteranopia {
   filter: hue-rotate(-20deg) saturate(0.8);
 }
 
-/* Protanopia Mode */
 body.colorblind-protanopia {
   --bg: #f5f7fa;
   --text: #1a1a1a;
@@ -207,7 +206,6 @@ body.colorblind-protanopia {
   filter: hue-rotate(-35deg) saturate(0.7);
 }
 
-/* Tritanopia Mode */
 body.colorblind-tritanopia {
   --bg: #f9f9ff;
   --text: #111;
@@ -216,8 +214,6 @@ body.colorblind-tritanopia {
   filter: hue-rotate(60deg) saturate(0.8);
 }
 
-/* Smooth transition between modes */
 body {
   transition: background 0.4s ease, color 0.4s ease, filter 0.3s ease;
 }
-

@@ -4,7 +4,6 @@
   --bg: #f9f9f9;
   --text: #222;
   --border: #ccc;
-  --card: #fff;
 }
 
 body {
@@ -23,17 +22,6 @@ body {
   text-align: center;
   position: relative;
 }
-.theme-toggle {
-  position: absolute;
-  right: 20px;
-  top: 8px;
-  background: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-}
 
 /* Content */
 .content {
@@ -41,74 +29,40 @@ body {
   max-width: 900px;
   margin: 0 auto;
 }
-textarea {
-  width: 100%;
-  height: 150px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px;
-}
-
-/* Settings Panel */
-.settings-panel {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 12px;
-  background: rgba(255,255,255,0.15);
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  margin: 15px 0;
-}
-.settings-panel label {
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-.settings-panel select, .settings-panel input {
-  padding: 6px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-}
 
 /* Controls */
 .controls {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin: 14px 0;
 }
 .controls button {
   background: var(--accent);
   color: #fff;
   border: none;
-  padding: 10px 16px;
+  padding: 8px 14px;
   border-radius: 6px;
-  font-weight: 600;
   cursor: pointer;
-  transition: 0.3s;
+  font-weight: 600;
 }
 .controls button:hover {
   background: var(--accent-hover);
-  transform: scale(1.05);
 }
 
-/* Screens — fade/slide switch */
+/* Screen Container */
 .screen-container {
   position: relative;
-  min-height: 220px;
+  min-height: 250px;
 }
+
+/* Screens */
 .screen {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  min-height: 220px;
-  background: #fff;
+  inset: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 12px;
+  background: #fff;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s ease, transform 0.4s ease;
@@ -117,61 +71,78 @@ textarea {
 .screen.active {
   opacity: 1;
   pointer-events: all;
-  z-index: 5;
+  z-index: 2;
   transform: translateY(0);
 }
 
-/* Flow Mode */
+/* Flow mode */
+.flow {
+  overflow: hidden;
+  position: relative;
+}
 .flow #marquee {
   white-space: nowrap;
   font-size: 1.2rem;
   line-height: 1.5;
+  color: var(--text);
+  margin-top: 80px;
 }
 
-/* RSVP Mode */
+/* RSVP mode */
 .rsvp #rsvpWord {
   font-size: 2rem;
   text-align: center;
   margin-top: 60px;
 }
 
+/* 🧭 Adjustable Flow Lines */
+.flow-line {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: ns-resize;
+  transition: background 0.2s;
+}
+.flow-line:hover {
+  background: var(--accent);
+}
+.flow.hide-lines .flow-line {
+  display: none;
+}
+
+/* Default line positions */
+.flow-line[data-line="1"] { top: 20%; }
+.flow-line[data-line="2"] { top: 35%; }
+.flow-line[data-line="3"] { top: 50%; }
+.flow-line[data-line="4"] { top: 65%; }
+.flow-line[data-line="5"] { top: 80%; }
+
 /* Footer */
 .footer {
-  width: 100%;
   text-align: center;
-  padding: 12px 0;
-  background: var(--bg);
   border-top: 1px solid var(--border);
+  padding: 12px 0;
+  margin-top: 30px;
   font-size: 14px;
 }
 .footer-links {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 12px;
-}
-.footer-links a {
-  color: var(--accent);
-  text-decoration: none;
-}
-.footer-links a:hover {
-  color: #ffcc00;
 }
 
 /* Dark Mode */
 body.dark-mode {
-  --bg: #111;
+  --bg: #1a1a1a;
   --text: #eee;
-  --border: #333;
-  --card: #222;
+  --border: #444;
 }
-body.dark-mode .footer {
-  background: #111;
-  color: #ccc;
+body.dark-mode .screen {
+  background: #222;
 }
-
-/* Responsive */
-@media (max-width: 700px) {
-  .settings-panel { flex-direction: column; }
-  .controls button { width: 90%; }
+body.dark-mode .flow-line {
+  background: rgba(255,255,255,0.3);
 }

@@ -14,12 +14,12 @@
     <link rel="stylesheet" href="style.min.css" />
   </head>
 
-  <body class="bg-[#0b1120] text-gray-100">
+  <body class="bg-[#0b1120] text-gray-100 transition-colors duration-300">
     <div class="app-root max-w-[1280px] mx-auto min-h-screen flex flex-col">
       <!-- === Sidebar (Right Side) === -->
       <aside
         id="sidebar"
-        class="sidebar hidden fixed top-0 right-0 h-full w-64 bg-[#020617] border-l border-gray-800 transition-transform duration-300 translate-x-full z-40"
+        class="sidebar fixed top-0 right-0 h-full w-64 bg-[#020617] border-l border-gray-800 transform translate-x-full transition-transform duration-300 z-40"
       >
         <div class="p-4 space-y-3 text-gray-200 overflow-y-auto h-full">
           <h2 class="text-sm uppercase tracking-wider text-gray-400">
@@ -126,7 +126,7 @@
             aria-label="Toggle Dark/Light Mode"
           ></button>
 
-          <!-- 🍔 Sidebar Toggle (inside header) -->
+          <!-- 🍔 Sidebar Toggle -->
           <button
             id="sidebarToggle"
             class="bg-[#020617] border border-gray-700 rounded-l-lg p-1 pr-2 text-xs text-gray-300 hover:text-cyan-400 flex items-center gap-1"
@@ -263,22 +263,20 @@
       document.getElementById("currentYear").textContent =
         new Date().getFullYear();
 
-      // === Sidebar Toggle (Right Side) ===
+      // === Sidebar Logic ===
       const sidebar = document.getElementById("sidebar");
       const sidebarToggle = document.getElementById("sidebarToggle");
       const closeSidebar = document.getElementById("closeSidebar");
 
       sidebarToggle.addEventListener("click", () => {
         sidebar.classList.toggle("translate-x-full");
-        sidebar.classList.toggle("hidden");
       });
 
       closeSidebar.addEventListener("click", () => {
         sidebar.classList.add("translate-x-full");
-        setTimeout(() => sidebar.classList.add("hidden"), 250);
       });
 
-      // === Accessibility Toggle in Sidebar ===
+      // === Accessibility Panel ===
       const accessToggle = document.getElementById("accessibilitySidebarToggle");
       const accessPanel = document.getElementById("accessibilityPanel");
       const closeAccess = document.getElementById("closeAccessibilitySidebar");
@@ -291,7 +289,14 @@
         accessPanel.classList.add("hidden");
       });
 
-      // Dummy nav functions
+      // === Theme Toggle ===
+      const themeToggle = document.getElementById("themeToggle");
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("bg-white");
+        document.body.classList.toggle("text-gray-900");
+      });
+
+      // Dummy navigation
       function goHome() {
         alert("Go to Home screen");
       }
@@ -315,4 +320,3 @@
     <script src="react.tsx"></script>
   </body>
 </html>
-

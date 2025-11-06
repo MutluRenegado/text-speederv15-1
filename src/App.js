@@ -1,5 +1,4 @@
-// src/App.js
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import HomeScreen from "./screens/HomeScreen";
 import ReadingSessionScreen from "./screens/ReadingSessionScreen";
 import ResultsScreen from "./screens/ResultsScreen";
@@ -10,122 +9,83 @@ import "./AppLayout.css";
 
 export default function App() {
   const [view, setView] = useState("home");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-  const { currentUser, loading } = useAuth();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
+  const { user } = useAuth();
 
-  // Apply dark/light theme to <body>
-  useEffect(() => {
-    document.body.classList.toggle("dark-mode", darkMode);
-  }, [darkMode]);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+  const toggleAccessibility = () =>
+    setIsAccessibilityOpen(!isAccessibilityOpen);
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen text-gray-500 animate-pulse">
-        Loading...
-      </div>
-    );
-
-  if (!currentUser)
-    return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <h1 className="text-2xl font-bold text-gray-800">TextSpeeder</h1>
-        <p className="text-gray-500">Please sign in to continue.</p>
-      </div>
-    );
-
-  // --- Active Page Rendering ---
-  let content;
-  switch (view) {
-    case "reading":
-      content = <ReadingSessionScreen onExit={() => setView("home")} />;
-      break;
-    case "results":
-      content = <ResultsScreen onHome={() => setView("home")} />;
-      break;
-    case "profile":
-      content = <ProfileScreen />;
-      break;
-    case "leaderboard":
-      content = <LeaderboardScreen onBack={() => setView("home")} />;
-      break;
-    default:
-      content = (
-        <HomeScreen
-          onStartReading={() => setView("reading")}
-          onProfile={() => setView("profile")}
-          onLeaderboard={() => setView("leaderboard")}
-        />
-      );
-  }
+  const renderScreen = () => {
+    switch (view) {
+      case "reading":
+        return <ReadingSessionScreen />;
+      case "results":
+        return <ResultsScreen />;
+      case "profile":
+        return <ProfileScreen />;
+      case "leaderboard":
+        return <LeaderboardScreen />;
+      default:
+        return <HomeScreen />;
+    }
+  };
 
   return (
-    <div className="app-root">
-      {/* === HEADER === */}
-      <header className="top-bar">
-        <div className="logo">📘 TextSpeeder</div>
-
-        <div className="top-controls">
-          <button
-            className="theme-toggle"
-            onClick={() => setDarkMode((prev) => !prev)}
-            title="Toggle Dark/Light Mode"
-          >
-            {darkMode ? "🌙" : "☀️"}
-          </button>
-
-          <button
-            id="sidebarToggle"
-            className="menu-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            ☰ Menu
-          </button>
-        </div>
+    <div className="app-layout">
+      {/* Header */}
+      <header className="app-header">
+        <button className="hamburger" onClick={toggleSidebar}>
+          ☰
+        </button>
+        <h1>Text Speeder v15.1</h1>
       </header>
 
-/* -------------------------
-   Sidebar open/close logic
-------------------------- */
-const sidebar = document.getElementById('sidebar');
-const sidebarOverlay = document.getElementById('sidebarOverlay');
-const sidebarToggleHeader = document.getElementById('sidebarToggleHeader');
-const closeSidebarBtn = document.getElementById('closeSidebar');
-const accessibilityHandle = document.getElementById('accessibilityHandle');
-const accessibilityPanel = document.getElementById('accessibilityPanel');
+      {/* Sidebar */}
+      <div className={`sidebar ${isSidebarOpen ? "open" : ""}`}>
+        <button className="close-btn" onClick={toggleSidebar}>
+          ×
+        </button>
+        <ul>
+          <li onClick={() => setView("home")}>Home</li>
+          <li onClick={() => setView("reading")}>Reading Session</li>
+          <li onClick={() => setView("results")}>Results</li>
+          <li onClick={() => setView("leaderboard")}>Leaderboard</li>
+          <li onClick={() => setView("profile")}>Profile</li>
+        </ul>
+      </div>
 
-function openSidebar() {
-  sidebar.classList.remove('translate-x-full');
-  sidebarOverlay.classList.remove('hidden');
-}
+      {/* Accessibility Handle (top-right corner) */}
+      <img
+        src="https://raw.githubusercontent.com/MutluRenegado/text-speeder-v15-1/main/assets/handle/accessibility-handle.png"
+        alt="Accessibility handle"
+        className="accessibility-handle"
+        onClick={toggleAccessibility}
+      />
 
-function closeSidebar() {
-  sidebar.classList.add('translate-x-full');
-  sidebarOverlay.classList.add('hidden');
-  accessibilityPanel.classList.add('hidden');
-}
+      {/* Accessibility Panel */}
+      <div
+        className={`accessibility-panel ${
+          isAccessibilityOpen ? "open" : ""
+        }`}
+      >
+        <button className="close-btn" onClick={toggleAccessibility}>
+          ×
+        </button>
+        <h3>Accessibility Mode</h3>
+        <p>Adjust font size, color, or screen contrast.</p>
+        <div className="accessibility-options">
+          <button>Increase Text</button>
+          <button>High Contrast</button>
+          <button>Dark Mode</button>
+        </div>
+      </div>
 
-/* === ☰ MENU BUTTON opens full sidebar === */
-sidebarToggleHeader.addEventListener('click', () => {
-  const isHidden = sidebar.classList.contains('translate-x-full');
-  if (isHidden) openSidebar();
-  else closeSidebar();
-});
-
-/* === ✖ Close or overlay click closes everything === */
-closeSidebarBtn.addEventListener('click', closeSidebar);
-sidebarOverlay.addEventListener('click', closeSidebar);
-
-/* === ♿ Handle only toggles Accessibility Panel === */
-if (accessibilityHandle) {
-  accessibilityHandle.addEventListener('click', () => {
-    // open sidebar first if it's closed
-    openSidebar();
-    // ensure only the accessibility panel is visible
-    const isHidden = accessibilityPanel.classList.contains('hidden');
-    document.querySelectorAll('#sidebar nav > div > div').forEach(div => {
-      if (div.id !== 'accessibilityPanel') div.classList.add('hidden');
-    });
-    if (isHidden) accessibilityPanel.classList.remove('hidden');
-  });
+      {/* Main Content */}
+      <main className={`content ${isSidebarOpen ? "blurred" : ""}`}>
+        {renderScreen()}
+      </main>
+    </div>
+  );
 }

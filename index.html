@@ -1,208 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>⚡ TextSpeeder v10.1</title>
-    <meta
-      name="description"
-      content="TextSpeeder v10.1 – Speed reading app with accessibility, consent, and theme support."
-    />
+<head>
+  <meta charset="UTF-8" />
+  <title>⚡ TextSpeeder v10.1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="TextSpeeder v10.1 – Speed reading app with new side controls and settings." />
 
-    <!-- ✅ Optional: Tailwind first (if you use it) -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-      rel="stylesheet"
-    />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
 
-    <!-- ✅ Your custom CSS last, so it overrides Tailwind -->
-    <link rel="stylesheet" href="style.min.css" />
-  </head>
+  <style>
+    :root {
+      --bg-color: #0b1120;
+      --text-color: #f3f4f6;
+      --accent: #06b6d4;
+      --border: #1e293b;
+    }
 
-  <body>
-    <!-- =======================================================
-         ⚡ MAIN APP INTERFACE
-         ======================================================= -->
-    <div class="app-root max-w-[1280px] mx-auto min-h-screen flex flex-col">
-      <!-- === Sidebar (Hidden by default) === -->
-      <aside id="sidebar" class="sidebar hidden fixed top-0 left-0 h-full w-64 bg-[#020617] border-r border-gray-800 transition-transform duration-300 -translate-x-full z-40">
-        <div class="p-4 space-y-3 text-gray-200">
-          <h2 class="text-sm uppercase tracking-wider text-gray-400">
-            Navigation
-          </h2>
-          <button class="block w-full text-left hover:text-cyan-400" onclick="goHome()">🏠 Home</button>
-          <button class="block w-full text-left hover:text-cyan-400" onclick="goProfile()">👤 Profile</button>
-          <button class="block w-full text-left hover:text-cyan-400" onclick="goLeaderboard()">🏆 Leaderboard</button>
-          <button id="closeSidebar" class="block w-full text-left text-red-400 mt-2">✖ Close</button>
-        </div>
-      </aside>
+    body {
+      margin: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: "Inter", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-      <!-- === Sidebar Toggle === -->
-      <button
-        id="sidebarToggle"
-        class="fixed top-3 left-3 z-50 bg-[#020617] border border-gray-700 rounded-full px-3 py-1 text-sm text-gray-300 hover:text-cyan-400"
-      >
-        ☰ Menu
-      </button>
+    .app-container {
+      position: relative;
+      width: 100%;
+      max-width: 1280px;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
 
-      <!-- === Header === -->
-      <header class="top-bar flex items-center justify-between p-4 border-b border-gray-800">
-        <h1 class="text-xl font-semibold text-gray-100">⚡ TextSpeeder</h1>
-        <button
-          id="themeToggle"
-          class="theme-toggle w-8 h-8 rounded-full border border-gray-700 bg-transparent"
-          aria-label="Toggle Dark/Light Mode"
-        ></button>
-      </header>
+    .reader-area {
+      position: relative;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+    }
 
-      <!-- === Main Content === -->
-      <main class="content flex-1 flex flex-col p-4 gap-4">
-        <textarea
-          id="textInput"
-          class="w-full rounded-lg border border-gray-700 bg-[#0b1120] p-3 text-gray-200"
-          placeholder="Paste or load your text here..."
-        ></textarea>
+    /* Reading screen reduced height by 25% */
+    .reading-box {
+      width: 100%;
+      height: 90px;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #020617;
+      color: var(--accent);
+      font-size: 2rem;
+      font-weight: 600;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
+    }
 
-        <div class="controls flex gap-2">
-          <button id="loadBtn" class="px-3 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-500">Load</button>
-          <button id="pauseBtn" class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600">Pause</button>
-          <button id="startOverBtn" class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600">Restart</button>
-        </div>
+    /* Left and right control panels */
+    .side-panel {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      z-index: 40;
+    }
 
-        <!-- === Two Reading Screens (stacked behind each other) === -->
-        <div class="relative w-full flex-1 rounded-lg border border-gray-800 overflow-hidden mt-4">
-          <section id="flowScreen" class="screen flow absolute inset-0 opacity-100 transition-opacity duration-300 flex items-center justify-center">
-            <div id="marquee" class="text-3xl font-semibold text-cyan-400"></div>
-          </section>
+    .left-panel {
+      left: 1rem;
+    }
 
-          <section id="rsvpScreen" class="screen rsvp absolute inset-0 opacity-0 transition-opacity duration-300 flex items-center justify-center">
-            <div id="rsvpWord" class="text-3xl font-semibold text-cyan-400"></div>
-          </section>
-        </div>
-      </main>
-    </div>
+    .right-panel {
+      right: 1rem;
+      align-items: center;
+    }
 
-    <!-- ✅ Control buttons below the screens -->
-<div class="reader-controls">
-  <button id="pauseBtn">⏸️ Pause</button>
-  <button id="restartBtn">🔁 Start Over</button>
-  <button id="hideLinesBtn">🧾 Hide Lines</button>
-  <button id="hideScreenBtn">🕳️ Hide Screen</button>
-</div>
-    <!-- =======================================================
-         ♿ ACCESSIBILITY LAYER (With Custom Handle)
-         ======================================================= -->
-    <div id="accessibilityLayer">
-      <div id="accessibilityOverlay" class="accessibility-overlay"></div>
+    .side-panel select,
+    .side-panel input,
+    .side-panel button {
+      background: #1e293b;
+      color: #e2e8f0;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.5rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      width: 140px;
+    }
 
-      <div id="accessibilityFrame" class="accessibility-frame">
-        <div class="accessibility-panel">
-          <button
-            id="closeAccessibility"
-            class="close-btn"
-            aria-label="Close Accessibility Menu"
-          >
-            ✖
-          </button>
-          <h3>Accessibility Options</h3>
+    .settings-section {
+      margin-top: 2rem;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      width: 100%;
+    }
 
-          <button data-mode="accessible-mode">🟢 Accessible Mode</button>
-          <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
-          <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
-          <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
+    .settings-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--accent);
+    }
 
-          <button id="resetAccessibility" class="reset-btn">Reset</button>
-          <p id="accessibilityStatus" class="status">Mode: Default</p>
-        </div>
+    .settings-content {
+      margin-top: 0.75rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .settings-content.active {
+      display: flex;
+    }
+
+    button {
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: var(--accent);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <h1 class="text-center text-2xl font-bold text-cyan-400">⚡ TextSpeeder v10.1</h1>
+
+    <!-- 🧠 Text Input -->
+    <textarea
+      id="textInput"
+      class="w-full mt-4 rounded-lg border border-gray-700 bg-[#0b1120] p-3 text-gray-200"
+      rows="6"
+      placeholder="Paste or load your text here..."
+    ></textarea>
+
+    <!-- 📖 Reading Area -->
+    <div class="reader-area">
+      <div class="reading-box" id="readingBox">
+        <div id="displayWord">Your text will appear here...</div>
       </div>
-
-      <!-- ♿ Custom Accessibility Handle Button -->
-      <button
-        id="accessibilityToggle"
-        class="accessibility-toggle"
-        aria-label="Open Accessibility Menu"
-      >
-        <img
-          src="assets/handle/accessibility-handle.png"
-          alt="Accessibility Handle"
-          class="accessibility-icon"
-        />
-      </button>
     </div>
 
-    <!-- =======================================================
-         🍪 CONSENT MANAGER
-         ======================================================= -->
-    <div id="consentBanner" class="consent-banner">
-      <div class="consent-content">
-        <p>
-          We use cookies to enhance your experience, analyze usage, and connect
-          with Google Tag Manager (GTM). You can choose to accept or reject.
-        </p>
-        <div class="consent-buttons">
-          <button id="acceptCookies">Accept</button>
-          <button id="rejectCookies" class="reject">Reject</button>
-        </div>
+    <!-- ⚙️ Settings Section -->
+    <div class="settings-section">
+      <div id="settingsHeader" class="settings-header">
+        <span>⚙️ Settings</span>
+        <span id="toggleSettings">▼</span>
+      </div>
+      <div id="settingsContent" class="settings-content">
+        <button id="toggleLinesBtn">🧾 Hide Lines</button>
+        <button id="hideScreenBtn">🕳️ Hide Screen</button>
+        <button id="themeToggle">🌗 Toggle Theme</button>
+        <button id="accessibleToggle">♿ Accessible Mode</button>
       </div>
     </div>
 
-    <!-- =======================================================
-         🌐 FOOTER
-         ======================================================= -->
-    <footer class="footer border-t border-gray-800 mt-8 p-4 text-center text-gray-400 text-sm">
-      <nav class="footer-links space-x-2">
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
-        <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
-        <span class="footer-divider">|</span>
-        <span class="footer-copy"
-          >© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span
-        >
-      </nav>
-    </footer>
+    <!-- 🕹️ Playback Controls -->
+    <div class="flex justify-center gap-3 mt-4">
+      <button id="loadBtn" class="px-3 py-2 bg-cyan-600 text-white rounded-md hover:bg-cyan-500">Load</button>
+      <button id="pauseBtn" class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600">Pause</button>
+      <button id="startOverBtn" class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md hover:bg-gray-600">Restart</button>
+    </div>
+  </div>
 
-    <!-- =======================================================
-         📜 SCRIPTS
-         ======================================================= -->
-    <script src="accessibility.js"></script>
-    <script src="consent.js"></script>
-    <script>
-      // Footer year
-      document.getElementById("currentYear").textContent = new Date().getFullYear();
+  <!-- 🎛️ LEFT PANEL -->
+  <div class="side-panel left-panel">
+    <select id="modeSelect">
+      <option value="flow">Flow Mode</option>
+      <option value="rsvp">RSVP Mode</option>
+    </select>
 
-      // Sidebar toggle
-      const sidebar = document.getElementById("sidebar");
-      const sidebarToggle = document.getElementById("sidebarToggle");
-      const closeSidebar = document.getElementById("closeSidebar");
+    <select id="fontType">
+      <option value="sans-serif">Default</option>
+      <option value="serif">Serif</option>
+      <option value="monospace">Monospace</option>
+      <option value="'Kalam', cursive">Handwriting</option>
+    </select>
 
-      sidebarToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("-translate-x-full");
-        sidebar.classList.toggle("hidden");
-      });
-      closeSidebar.addEventListener("click", () => {
-        sidebar.classList.add("-translate-x-full");
-        setTimeout(() => sidebar.classList.add("hidden"), 250);
-      });
+    <select id="bgColor">
+      <option value="#000000">Black</option>
+      <option value="#1e293b">Dark Blue</option>
+      <option value="#333333">Gray</option>
+      <option value="#004466">Deep Blue</option>
+    </select>
 
-      // Dummy nav actions
-      function goHome() { alert("Go to Home screen"); }
-      function goProfile() { alert("Go to Profile screen"); }
-      function goLeaderboard() { alert("Go to Leaderboard screen"); }
+    <button id="resetStyles">🔄 Reset</button>
+  </div>
 
-      // Dual screen toggling logic example
-      const flow = document.getElementById("flowScreen");
-      const rsvp = document.getElementById("rsvpScreen");
-      document.getElementById("pauseBtn").addEventListener("click", () => {
-        flow.classList.toggle("opacity-0");
-        rsvp.classList.toggle("opacity-100");
-      });
-    </script>
-  </body>
+  <!-- 🎛️ RIGHT PANEL -->
+  <div class="side-panel right-panel">
+    <label class="text-sm text-gray-300">📂 Upload</label>
+    <input type="file" id="fileInput" accept=".txt" />
+
+    <label class="text-sm text-gray-300 mt-2">⚡ WPM</label>
+    <input type="number" id="wpmInput" min="50" max="1000" value="200" />
+    <input type="range" id="wpmSlider" min="50" max="1000" value="200" />
+  </div>
+
+  <script>
+    // === Basic functionality ===
+    const fileInput = document.getElementById("fileInput");
+    const textInput = document.getElementById("textInput");
+    const loadBtn = document.getElementById("loadBtn");
+    const pauseBtn = document.getElementById("pauseBtn");
+    const startOverBtn = document.getElementById("startOverBtn");
+    const displayWord = document.getElementById("displayWord");
+    const wpmInput = document.getElementById("wpmInput");
+    const wpmSlider = document.getElementById("wpmSlider");
+    const readingBox = document.getElementById("readingBox");
+
+    let words = [];
+    let currentIndex = 0;
+    let isPaused = false;
+    let intervalId;
+
+    function startReading() {
+      clearInterval(intervalId);
+      const wpm = parseInt(wpmInput.value);
+      const delay = 60000 / wpm;
+      words = textInput.value.trim().split(/\s+/);
+      currentIndex = 0;
+
+      intervalId = setInterval(() => {
+        if (!isPaused && currentIndex < words.length) {
+          displayWord.textContent = words[currentIndex++];
+        }
+      }, delay);
+    }
+
+    loadBtn.addEventListener("click", startReading);
+    pauseBtn.addEventListener("click", () => {
+      isPaused = !isPaused;
+      pauseBtn.textContent = isPaused ? "▶️ Resume" : "⏸️ Pause";
+    });
+    startOverBtn.addEventListener("click", startReading);
+
+    fileInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => (textInput.value = evt.target.result);
+      reader.readAsText(file);
+    });
+
+    wpmSlider.addEventListener("input", () => (wpmInput.value = wpmSlider.value));
+    wpmInput.addEventListener("input", () => (wpmSlider.value = wpmInput.value));
+
+    // === Settings toggle ===
+    const settingsHeader = document.getElementById("settingsHeader");
+    const settingsContent = document.getElementById("settingsContent");
+    const toggleSettings = document.getElementById("toggleSettings");
+    settingsHeader.addEventListener("click", () => {
+      settingsContent.classList.toggle("active");
+      toggleSettings.textContent = settingsContent.classList.contains("active") ? "▲" : "▼";
+    });
+
+    // === Theme toggle ===
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      document.body.classList.toggle("light");
+      if (document.body.classList.contains("light")) {
+        document.body.style.background = "#f8fafc";
+        document.body.style.color = "#000";
+      } else {
+        document.body.style.background = "#0b1120";
+        document.body.style.color = "#f3f4f6";
+      }
+    });
+  </script>
+</body>
 </html>

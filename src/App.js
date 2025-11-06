@@ -1,13 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AppLayout.css";
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
+  const [glowActive, setGlowActive] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleAccessibility = () =>
     setIsAccessibilityOpen(!isAccessibilityOpen);
+
+  // Glow trigger every 5 minutes (300000 ms)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGlowActive(true);
+      setTimeout(() => setGlowActive(false), 4000); // Glow lasts 4s
+    }, 300000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div
@@ -22,8 +32,17 @@ export default function App() {
         </div>
 
         <div className="top-controls">
-          <button className="theme-toggle">🌓</button>
-          <button className="menu-toggle" onClick={toggleSidebar}>
+          <button
+            className={`theme-toggle ${glowActive ? "glow" : ""}`}
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
+          <button
+            className={`menu-toggle ${glowActive ? "glow" : ""}`}
+            onClick={toggleSidebar}
+            title="Menu"
+          >
             ☰
           </button>
         </div>
@@ -33,11 +52,9 @@ export default function App() {
       <aside className={`sidebar ${isSidebarOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-content">
           <div className="sidebar-title">Menu</div>
-          <button onClick={() => alert("Home clicked")}>Home</button>
-          <button onClick={() => alert("Profile clicked")}>Profile</button>
-          <button onClick={() => alert("Leaderboard clicked")}>
-            Leaderboard
-          </button>
+          <button className={glowActive ? "glow" : ""}>Home</button>
+          <button className={glowActive ? "glow" : ""}>Profile</button>
+          <button className={glowActive ? "glow" : ""}>Leaderboard</button>
         </div>
       </aside>
 
@@ -57,9 +74,9 @@ export default function App() {
       >
         <h3>Accessibility Mode</h3>
         <div className="accessibility-options">
-          <button>Increase Text Size</button>
-          <button>High Contrast</button>
-          <button>Dark Mode</button>
+          <button className={glowActive ? "glow" : ""}>Increase Text Size</button>
+          <button className={glowActive ? "glow" : ""}>High Contrast</button>
+          <button className={glowActive ? "glow" : ""}>Dark Mode</button>
         </div>
       </div>
 

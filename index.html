@@ -1,253 +1,427 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⚡ TextSpeeder v15</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>⚡ TextSpeeder - Design Rebuild</title>
 
-  <!-- Main Styles -->
-  <link rel="stylesheet" href="style.css" />
-</head>
+    <!-- Tailwind CDN for quick prototype -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<body class="light-mode">
-  <div class="app-root">
+    <style>
+      /* small extra styles to match the look in the image */
+      :root{
+        --turquoise: #27d0c6; /* large panels */
+        --accent: #b6004a; /* red/pink buttons */
+        --footer: #f6b659; /* footer orange */
+        --panel-dark: #0b1120; /* reading panel bg */
+      }
 
-    <!-- =======================
-         HEADER + SIDEBAR TOGGLE
-         ======================= -->
-    <header class="top-bar">
-      <button id="sidebarToggle">☰ Menu</button>
-      <h1>⚡ TextSpeeder</h1>
-      <button id="themeToggle" class="theme-toggle" aria-label="Toggle Theme"></button>
-    </header>
+      /* rounded pill buttons */
+      .pill {
+        border-radius: 999px;
+        background: var(--accent);
+        color: black;
+        padding: 0.45rem 0.9rem;
+        font-weight: 500;
+        box-shadow: none;
+      }
 
-    <!-- =======================
-         LEFT SIDEBAR MENU
-         ======================= -->
-    <aside id="sidebar" class="sidebar">
-      <div class="sidebar-content">
-        <button onclick="alert('Go Home')">🏠 Home</button>
-        <button onclick="alert('Profile')">👤 Profile</button>
-        <button onclick="alert('Leaderboard')">🏆 Leaderboard</button>
-        <button id="closeSidebar" class="reset-btn">✖ Close</button>
+      /* small pill (right column) */
+      .pill-sm {
+        border-radius: 999px;
+        background: var(--accent);
+        color: black;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.9rem;
+      }
+
+      /* header hamburger circle style */
+      .hamb-circle {
+        width: 34px;
+        height: 34px;
+        border-radius: 999px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background: black;
+        color: white;
+      }
+
+      /* subtle dark mode override */
+      .dark-mode {
+        --panel-dark: white;
+      }
+
+      /* marquee styling */
+      #marquee { white-space: nowrap; }
+
+      /* small focus for rsvp */
+      #rsvpWord { letter-spacing: 1px; }
+
+      /* hide scrollbar for big panels in demo */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+  </head>
+
+  <body class="antialiased bg-white text-black">
+
+    <div id="app" class="min-h-screen flex flex-col">
+
+      <!-- HEADER -->
+      <header class="p-6" style="background:var(--turquoise)">
+        <div class="max-w-[1100px] mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <!-- hamburger circle icon on the left like image -->
+            <div id="hambLeft" class="hamb-circle cursor-pointer" aria-hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+
+            <h1 class="font-serif text-2xl tracking-wider">TEXTSPEEDER</h1>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <!-- dark/light toggle -->
+            <button id="themeToggle" class="px-4 py-1 rounded-full bg-[#b6004a] text-black text-sm">dark/light</button>
+
+            <!-- hamburger in header near toggle (opens right sidebar) -->
+            <button id="sidebarToggleHeader" class="flex items-center gap-2 px-3 py-1 rounded-l-lg bg-black text-white text-sm">
+              <span class="text-lg">☰</span><span>Menu</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Three big turquoise panels -->
+      <main class="flex-1 max-w-[1100px] mx-auto w-full space-y-8 py-6 px-6">
+
+        <!-- panel 1: empty container with top-right upload/load in image -->
+        <section class="h-28 bg-[var(--turquoise)] rounded shadow-sm relative"></section>
+
+        <!-- panel 2: main flow screen area (large) -->
+        <section class="h-48 bg-[var(--turquoise)] rounded shadow-sm relative"></section>
+
+        <!-- panel 3: large reading area -->
+        <section class="h-60 bg-[var(--turquoise)] rounded shadow-sm relative flex items-center justify-center">
+          <!-- right vertical column of pink pills (focus mode etc) like the image -->
+          <div class="absolute right-4 top-4 flex flex-col gap-3 items-end">
+            <button id="focusModeBtn" class="pill-sm">focus mode</button>
+            <button id="hideLinesBtn" class="pill-sm">hide lines</button>
+            <button id="pauseRightBtn" class="pill-sm">pause</button>
+            <button id="restartRightBtn" class="pill-sm">restart</button>
+          </div>
+
+          <!-- inside big reading panel we will render the actual flow/rsvp screens below in controls area -->
+        </section>
+
+        <!-- Controls row (settings boxes as in image) -->
+        <section class="grid grid-cols-6 gap-6 items-start">
+
+          <!-- Column 1: Font Color / Font Height labels -->
+          <div class="col-span-1 space-y-3">
+            <div class="bg-gray-300 text-center py-3">Font Color</div>
+            <div class="bg-gray-300 text-center py-3">Font Height</div>
+
+            <div class="mt-3 flex gap-3">
+              <button id="uploadBtn" class="pill"> </button>
+              <button id="loadBtn" class="pill"> </button>
+            </div>
+          </div>
+
+          <!-- Column 2: Flow Screen Background -->
+          <div class="col-span-1">
+            <div class="bg-gray-300 text-center py-3">Flow Screen Background</div>
+            <div class="bg-gray-300 h-12 mt-3"></div>
+          </div>
+
+          <!-- Column 3: WPM -->
+          <div class="col-span-1">
+            <div class="bg-gray-300 text-center py-3">WPM</div>
+            <div class="bg-gray-300 h-12 mt-3"></div>
+          </div>
+
+          <!-- Column 4: Speed Slider -->
+          <div class="col-span-1">
+            <div class="bg-gray-300 text-center py-3">Speeded Slider</div>
+            <div class="mt-3 px-2">
+              <input id="speedSlider" type="range" min="100" max="1200" value="400" class="w-full" />
+            </div>
+          </div>
+
+          <!-- Column 5: Select Mode -->
+          <div class="col-span-1">
+            <div class="bg-gray-300 text-center py-3">Select Mode</div>
+            <div class="bg-gray-300 h-12 mt-3"></div>
+          </div>
+
+          <!-- Column 6: empty placeholder -->
+          <div class="col-span-1"></div>
+        </section>
+
+        <!-- Reader area: flow and RSVP screens stacked, with marquee -->
+        <section class="relative bg-[var(--panel-dark)] rounded h-40 border border-gray-800 overflow-hidden no-scrollbar">
+          <div id="flowScreen" class="absolute inset-0 flex items-center pl-6 overflow-hidden">
+            <div id="marquee" class="text-3xl font-semibold text-cyan-400"></div>
+          </div>
+
+          <div id="rsvpScreen" class="absolute inset-0 flex items-center justify-center opacity-0 pointer-events-none">
+            <div id="rsvpWord" class="text-4xl font-semibold"></div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="mt-8">
+        <div class="bg-[var(--footer)] py-6">
+          <div class="max-w-[1100px] mx-auto text-center">
+            <div class="flex justify-center gap-8 mb-4">
+              <div class="font-bold text-xl">TEXT1</div>
+              <div class="font-bold text-xl">TEXT1</div>
+              <div class="font-bold text-xl">TEXT1</div>
+              <div class="font-bold text-xl">TEXT1</div>
+              <div class="font-bold text-xl">TEXT1</div>
+              <div class="font-bold text-xl">TEXT1</div>
+            </div>
+
+            <div class="text-2xl font-serif">Textspeeder 2025 All Rights Reserved</div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <!-- RIGHT SIDEBAR (drawer) -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-black/30 hidden z-40"></div>
+
+    <aside id="sidebar" class="fixed top-0 right-0 h-full w-72 bg-[#020617] border-l border-gray-800 transform translate-x-full transition-transform duration-300 z-50">
+      <div class="p-4 text-gray-200 h-full flex flex-col">
+        <div class="flex items-center justify-between">
+          <h3 class="uppercase tracking-wider text-gray-400">Navigation</h3>
+          <button id="closeSidebar" class="text-red-400">✖</button>
+        </div>
+
+        <nav class="mt-4 space-y-3 flex-1 overflow-auto">
+          <button class="w-full text-left hover:text-cyan-400" onclick="goHome()">🏠 Home</button>
+          <button class="w-full text-left hover:text-cyan-400" onclick="goProfile()">👤 Profile</button>
+          <button class="w-full text-left hover:text-cyan-400" onclick="goLeaderboard()">🏆 Leaderboard</button>
+
+          <div class="mt-4 border-t border-gray-700 pt-4">
+            <h4 class="text-sm text-gray-400 mb-2">Accessibility</h4>
+            <button id="accessibilitySidebarToggle" class="w-full text-left text-cyan-400 hover:text-cyan-300">♿ Open Accessibility</button>
+
+            <div id="accessibilityPanel" class="hidden mt-3 bg-[#0b1120] border border-gray-700 rounded-lg p-3 space-y-2">
+              <button id="closeAccessibilitySidebar" class="text-red-400 text-sm float-right">✖</button>
+              <h3 class="font-semibold mb-1 text-gray-200">Accessibility Options</h3>
+
+              <button data-mode="accessible-mode" class="w-full text-left hover:text-cyan-400">🟢 Accessible Mode</button>
+              <button data-mode="colorblind-deuteranopia" class="w-full text-left hover:text-cyan-400">🟡 Deuteranopia</button>
+              <button data-mode="colorblind-protanopia" class="w-full text-left hover:text-cyan-400">🔴 Protanopia</button>
+              <button data-mode="colorblind-tritanopia" class="w-full text-left hover:text-cyan-400">🔵 Tritanopia</button>
+
+              <button id="resetAccessibility" class="mt-2 w-full text-sm text-gray-300 hover:text-cyan-400 text-left">Reset</button>
+              <p id="accessibilityStatus" class="text-xs text-gray-400 mt-2">Mode: Default</p>
+            </div>
+          </div>
+        </nav>
+
+        <div class="mt-4 space-y-2">
+          <a class="text-sm text-gray-300 block" href="#">📜 License</a>
+          <a class="text-sm text-gray-300 block" href="#">🔐 Privacy</a>
+          <a class="text-sm text-gray-300 block" href="#">📘 Docs</a>
+        </div>
       </div>
     </aside>
 
-    <!-- =======================
-         MAIN CONTENT AREA
-         ======================= -->
-    <main class="content">
-
-      <!-- 📝 INPUT TEXT AREA -->
-      <textarea
-        id="textInput"
-        placeholder="Paste or load your text here..."
-      ></textarea>
-
-      <!-- 🎛 CONTROLS -->
-      <div class="controls">
-        <button id="loadBtn">Load</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="startOverBtn">Restart</button>
-      </div>
-
-      <!-- 🧠 FLOW/RSVP SCREEN CONTAINER -->
-      <div class="screen-container">
-        <!-- Flow screen -->
-        <section id="flowScreen" class="screen flow active">
-          <div id="marquee">Flow Mode Example</div>
-        </section>
-
-        <!-- RSVP screen -->
-        <section id="rsvpScreen" class="screen rsvp">
-          <div id="rsvpWord">RSVP Mode Example</div>
-        </section>
-      </div>
-
-      <!-- 🌀 READING MODE BUTTONS -->
-      <div class="reader-controls">
-        <button id="flowModeBtn">Flow</button>
-        <button id="flowHighlightBtn">Flow + Highlight</button>
-        <button id="rsvpModeBtn">RSVP</button>
-      </div>
-    </main>
-
-    <!-- =======================
-         ACCESSIBILITY OVERLAY + PANEL
-         ======================= -->
-    <div id="accessibilityLayer">
-      <div id="accessibilityOverlay" class="accessibility-overlay"></div>
-
-      <div id="accessibilityFrame" class="accessibility-frame">
-        <div class="accessibility-panel">
-          <button id="closeAccessibility" class="close-btn">✖</button>
-          <h3>♿ Accessibility Options</h3>
-
-          <button data-mode="accessible-mode">🟢 Accessible Mode</button>
-          <button data-mode="colorblind-deuteranopia">🟡 Deuteranopia</button>
-          <button data-mode="colorblind-protanopia">🔴 Protanopia</button>
-          <button data-mode="colorblind-tritanopia">🔵 Tritanopia</button>
-
-          <button id="resetAccessibility" class="reset-btn">Reset</button>
-          <p id="accessibilityStatus" class="text-xs mt-3 opacity-80">
-            Current Mode: Default
-          </p>
-        </div>
-      </div>
-
-      <!-- Toggle Handle -->
-      <button id="accessibilityToggle" class="accessibility-toggle">
-        <img
-          src="assets/handle/accessibility-handle.png"
-          alt="Accessibility Handle"
-          class="accessibility-icon"
-        />
-      </button>
+    <!-- small controls accessible on the page like image (right pill) -->
+    <div class="fixed right-6 bottom-32 flex flex-col gap-3 z-50">
+      <button id="focusMode" class="pill-sm">focus mode</button>
+      <button id="hideLines" class="pill-sm">hide lines</button>
+      <button id="pauseBtn" class="pill-sm">pause</button>
+      <button id="restartBtn" class="pill-sm">restart</button>
     </div>
 
-    <!-- =======================
-         FOOTER
-         ======================= -->
-    <footer class="footer">
-      <nav class="footer-links">
-        <span>© <span id="currentYear"></span> TextSpeeder. All rights reserved.</span>
-      </nav>
-    </footer>
-  </div>
+    <!-- bottom-right small upload/load area to mimic image's top-right buttons -->
+    <div class="fixed right-6 top-40 flex gap-3 z-40">
+      <label for="fileUpload" class="pill-sm cursor-pointer">upload</label>
+      <button id="loadFileBtn" class="pill-sm">load</button>
+      <input id="fileUpload" type="file" accept=".txt" class="hidden" />
+    </div>
 
-  <!-- =======================================================
-       MAIN SCRIPT — Unified Logic (Flow / Sidebar / Modes)
-       ======================================================= -->
-  <script>
-  /* =======================================================
-     ⚡ TEXTSPEEDER v15 — MAIN SCRIPT
-     ======================================================= */
+    <!-- SCRIPT: functionality -->
+    <script>
+      // DOM refs
+      const sidebar = document.querySelector('aside#sidebar');
+      const sidebarToggleHeader = document.getElementById('sidebarToggleHeader');
+      const closeSidebar = document.getElementById('closeSidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
 
-  // ===== Update Footer Year =====
-  const yearEl = document.getElementById("currentYear");
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
+      // theme toggle
+      const themeToggle = document.getElementById('themeToggle');
+      const rootBody = document.body;
 
-  // ===== Accessibility Sidebar Logic =====
-  const accessibilityFrame = document.getElementById("accessibilityFrame");
-  const accessibilityOverlay = document.getElementById("accessibilityOverlay");
-  const accessibilityToggle = document.getElementById("accessibilityToggle");
-  const closeAccessibility = document.getElementById("closeAccessibility");
-  const statusText = document.getElementById("accessibilityStatus");
+      // flow / rsvp
+      const marqueeEl = document.getElementById('marquee');
+      const rsvpScreen = document.getElementById('rsvpScreen');
+      const rsvpWord = document.getElementById('rsvpWord');
+      const flowScreen = document.getElementById('flowScreen');
+      let marqueeText = 'This is a sample scrolling sentence to demo the flow screen. Replace with user content.';
+      let marqueePos = 0;
+      let speed = 2; // px per tick (adjusts with slider)
+      let animationId = null;
+      let running = false;
+      const speedSlider = document.getElementById('speedSlider');
 
-  if (accessibilityToggle && accessibilityFrame) {
-    accessibilityToggle.addEventListener("click", () => {
-      accessibilityFrame.classList.toggle("open");
-      accessibilityOverlay.style.display = accessibilityFrame.classList.contains("open")
-        ? "block"
-        : "none";
-    });
-  }
+      // file upload / load demo
+      const fileUpload = document.getElementById('fileUpload');
+      const loadFileBtn = document.getElementById('loadFileBtn');
+      const uploadBtn = document.getElementById('uploadBtn');
 
-  if (closeAccessibility) {
-    closeAccessibility.addEventListener("click", () => {
-      accessibilityFrame.classList.remove("open");
-      accessibilityOverlay.style.display = "none";
-    });
-  }
-
-  if (accessibilityOverlay) {
-    accessibilityOverlay.addEventListener("click", () => {
-      accessibilityFrame.classList.remove("open");
-      accessibilityOverlay.style.display = "none";
-    });
-  }
-
-  // ===== Accessibility Modes =====
-  document.querySelectorAll("[data-mode]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const mode = btn.getAttribute("data-mode");
-      document.body.classList.remove(
-        "accessible-mode",
-        "colorblind-deuteranopia",
-        "colorblind-protanopia",
-        "colorblind-tritanopia"
-      );
-      document.body.classList.add(mode);
-      if (statusText)
-        statusText.textContent = "Current Mode: " + btn.textContent.trim();
-    });
-  });
-
-  const resetBtn = document.getElementById("resetAccessibility");
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      document.body.classList.remove(
-        "accessible-mode",
-        "colorblind-deuteranopia",
-        "colorblind-protanopia",
-        "colorblind-tritanopia"
-      );
-      if (statusText) statusText.textContent = "Current Mode: Default";
-    });
-  }
-
-  // ===== Dark/Light Theme Toggle =====
-  const themeToggle = document.getElementById("themeToggle");
-  if (themeToggle) {
-    themeToggle.addEventListener("click", () => {
-      if (document.body.classList.contains("dark-mode")) {
-        document.body.classList.remove("dark-mode");
-        document.body.classList.add("light-mode");
-      } else if (document.body.classList.contains("light-mode")) {
-        document.body.classList.remove("light-mode");
-        document.body.classList.add("dark-mode");
-      } else {
-        document.body.classList.add("dark-mode");
+      // utility to open sidebar
+      function openSidebar(){
+        sidebar.classList.remove('translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+        sidebarOverlay.classList.remove('opacity-0');
+        sidebarOverlay.classList.add('block');
       }
-    });
-  }
+      function closeSidebarFn(){
+        sidebar.classList.add('translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+        sidebarOverlay.classList.remove('block');
+      }
 
-  // ===== Flow / RSVP Screen Switching =====
-  const flowScreen = document.getElementById("flowScreen");
-  const rsvpScreen = document.getElementById("rsvpScreen");
+      // header hamburger opens sidebar
+      sidebarToggleHeader.addEventListener('click', () => {
+        if (sidebar.classList.contains('translate-x-full')) {
+          openSidebar();
+        } else {
+          closeSidebarFn();
+        }
+      });
 
-  const flowModeBtn = document.getElementById("flowModeBtn");
-  const flowHighlightBtn = document.getElementById("flowHighlightBtn");
-  const rsvpModeBtn = document.getElementById("rsvpModeBtn");
+      // overlay and close button
+      sidebarOverlay.addEventListener('click', closeSidebarFn);
+      closeSidebar.addEventListener('click', closeSidebarFn);
 
-  if (flowModeBtn)
-    flowModeBtn.addEventListener("click", () => {
-      flowScreen.classList.add("active");
-      rsvpScreen.classList.remove("active");
-      flowScreen.style.textDecoration = "none";
-    });
+      // accessibility toggles inside sidebar
+      const accessToggle = document.getElementById('accessibilitySidebarToggle');
+      const accessPanel = document.getElementById('accessibilityPanel');
+      const closeAccess = document.getElementById('closeAccessibilitySidebar');
 
-  if (flowHighlightBtn)
-    flowHighlightBtn.addEventListener("click", () => {
-      flowScreen.classList.add("active");
-      rsvpScreen.classList.remove("active");
-      flowScreen.style.textDecoration = "underline";
-    });
+      accessToggle.addEventListener('click', () => accessPanel.classList.toggle('hidden'));
+      closeAccess.addEventListener('click', () => accessPanel.classList.add('hidden'));
 
-  if (rsvpModeBtn)
-    rsvpModeBtn.addEventListener("click", () => {
-      flowScreen.classList.remove("active");
-      rsvpScreen.classList.add("active");
-    });
+      // theme toggle simple (switch background + text)
+      function setDarkMode(isDark){
+        if (isDark){
+          document.documentElement.style.setProperty('--panel-dark', '#0b1120');
+          document.body.classList.add('bg-[#0b1120]');
+          document.body.classList.add('text-gray-100');
+        } else {
+          document.documentElement.style.setProperty('--panel-dark', 'white');
+          document.body.classList.remove('bg-[#0b1120]');
+          document.body.classList.remove('text-gray-100');
+        }
+        localStorage.setItem('ts-dark', isDark ? '1' : '0');
+      }
 
-  // ===== Sidebar (Left Menu) =====
-  const sidebar = document.getElementById("sidebar");
-  const sidebarToggle = document.getElementById("sidebarToggle");
-  const closeSidebar = document.getElementById("closeSidebar");
+      // initialize theme from storage (default dark-like)
+      const stored = localStorage.getItem('ts-dark');
+      if (stored === null) {
+        setDarkMode(true);
+      } else {
+        setDarkMode(stored === '1');
+      }
 
-  if (sidebar && sidebarToggle) {
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("open");
-    });
-  }
+      themeToggle.addEventListener('click', () => {
+        const darkNow = localStorage.getItem('ts-dark') === '1';
+        setDarkMode(!darkNow);
+      });
 
-  if (closeSidebar) {
-    closeSidebar.addEventListener("click", () => {
-      sidebar.classList.remove("open");
-    });
-  }
+      // flow marquee simple implementation
+      function startMarquee(){
+        running = true;
+        cancelAnimationFrame(animationId);
+        marqueePos = flowScreen.clientWidth;
+        marqueeEl.textContent = marqueeText;
+        function tick(){
+          marqueePos -= parseFloat(speedSlider.value || 400) / 200; // scale slider
+          marqueeEl.style.transform = `translateX(${marqueePos}px)`;
+          animationId = requestAnimationFrame(tick);
+        }
+        tick();
+      }
+      function stopMarquee(){
+        running = false;
+        cancelAnimationFrame(animationId);
+      }
 
-  console.log("✅ TextSpeeder v15 fully loaded.");
-  </script>
-</body>
+      // Pause / Restart handlers
+      document.querySelectorAll('#pauseBtn, #pauseRightBtn').forEach(btn=>{
+        btn.addEventListener('click', () => {
+          if (running) { stopMarquee(); btn.textContent = 'resume'; } 
+          else { startMarquee(); btn.textContent = 'pause'; }
+        });
+      });
+
+      document.querySelectorAll('#restartBtn, #restartRightBtn').forEach(btn=>{
+        btn.addEventListener('click', () => {
+          stopMarquee();
+          startMarquee();
+        });
+      });
+
+      // Focus / Hide lines demo (toggles CSS class)
+      document.getElementById('focusMode').addEventListener('click', ()=> {
+        flowScreen.classList.toggle('items-center');
+        flowScreen.classList.toggle('justify-center');
+      });
+      document.getElementById('hideLines').addEventListener('click', ()=> {
+        // In this demo, just toggle visibility of rsvp screen
+        rsvpScreen.classList.toggle('opacity-0');
+        rsvpScreen.classList.toggle('pointer-events-none');
+      });
+
+      // Start marquee at load
+      startMarquee();
+
+      // Upload / load file: simple demo - reads .txt and sets marqueeText
+      uploadBtn.addEventListener('click', () => fileUpload.click());
+      fileUpload.addEventListener('change', (e) => {
+        const f = e.target.files[0];
+        if (!f) return;
+        const reader = new FileReader();
+        reader.onload = function(ev){
+          marqueeText = (ev.target.result || '').replace(/\r?\n/g,' ');
+          marqueeEl.textContent = marqueeText;
+          stopMarquee();
+          startMarquee();
+        };
+        reader.readAsText(f);
+      });
+
+      loadFileBtn.addEventListener('click', () => {
+        // fake load: set sample text or you can replace with fetching from Firestore
+        marqueeText = 'Loaded sample text. This replaces the content and the marquee restarts.';
+        marqueeEl.textContent = marqueeText;
+        stopMarquee();
+        startMarquee();
+      });
+
+      // small demo nav functions
+      function goHome(){ alert('Go to Home screen'); }
+      function goProfile(){ alert('Go to Profile screen'); }
+      function goLeaderboard(){ alert('Go to Leaderboard screen'); }
+
+      // accessibility options click handlers (demo)
+      document.querySelectorAll('[data-mode]').forEach(btn=>{
+        btn.addEventListener('click', (e)=>{
+          const mode = e.currentTarget.getAttribute('data-mode');
+          document.getElementById('accessibilityStatus').textContent = 'Mode: ' + mode;
+        });
+      });
+
+      // hide overlay initially (class management)
+      sidebarOverlay.classList.add('hidden');
+    </script>
+  </body>
 </html>

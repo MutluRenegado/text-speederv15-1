@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState } from "react";
 import HomeScreen from "./screens/HomeScreen";
 import ReadingSessionScreen from "./screens/ReadingSessionScreen";
@@ -6,7 +5,7 @@ import ResultsScreen from "./screens/ResultsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import LeaderboardScreen from "./screens/LeaderboardScreen";
 import { useAuth } from "./hooks/useAuth";
-import "./AppLayout.css"; // new CSS file for sidebar + layout styling
+import "./AppLayout.css"; // pastel layout styles
 
 export default function App() {
   // ---- Basic App State ----
@@ -14,22 +13,21 @@ export default function App() {
   const [activeText, setActiveText] = useState(null);
   const [lastSession, setLastSession] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
 
   const { currentUser, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen text-gray-500 animate-pulse">
-        Loading...
-      </div>
+      <div className="loading-screen">Loading...</div>
     );
   }
 
   if (!currentUser) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen space-y-4">
-        <h1 className="text-2xl font-bold text-gray-800">TextSpeeder</h1>
-        <p className="text-gray-500">Please sign in to continue.</p>
+      <div className="auth-screen">
+        <h1>TextSpeeder</h1>
+        <p>Please sign in to continue.</p>
       </div>
     );
   }
@@ -85,19 +83,31 @@ export default function App() {
       );
   }
 
-  // ---- Render with layout wrapper ----
+  // ---- Render ----
   return (
-    <div className="app-root">
-      {/* Sidebar Toggle */}
-      <button
-        className="sidebar-toggle"
-        onClick={() => setSidebarOpen((s) => !s)}
-      >
-        ☰ Menu
-      </button>
+    <div className={`app-root ${darkMode ? "dark" : ""}`}>
+      {/* Header */}
+      <header className="top-bar">
+        <div className="logo">TEXTSPEEDER</div>
+        <div className="top-controls">
+          <button
+            className="theme-toggle"
+            onClick={() => setDarkMode(!darkMode)}
+          >
+            {darkMode ? "☀️ Light" : "🌙 Dark"}
+          </button>
+          <button
+            id="sidebarToggle"
+            className="menu-toggle"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+          >
+            ☰ Menu
+          </button>
+        </div>
+      </header>
 
-      {/* Sidebar */}
-      <aside className={`sidebar ${sidebarOpen ? "" : "sidebar--closed"}`}>
+      {/* Sidebar (Right) */}
+      <aside className={`sidebar ${sidebarOpen ? "sidebar-open" : "sidebar-closed"}`}>
         <div className="sidebar-content">
           <h2 className="sidebar-title">Navigation</h2>
           <button onClick={() => setView("home")}>🏠 Home</button>
@@ -107,53 +117,13 @@ export default function App() {
         </div>
       </aside>
 
-<script>
-  // Reader control buttons
-  const pauseBtn = document.getElementById("pauseBtn");
-  const restartBtn = document.getElementById("restartBtn");
-  const hideLinesBtn = document.getElementById("hideLinesBtn");
-  const hideScreenBtn = document.getElementById("hideScreenBtn");
-  const flowScreen = document.getElementById("flowScreen");
-  const rsvpScreen = document.getElementById("rsvpScreen");
-  const marquee = document.getElementById("marquee");
-  const rsvpWord = document.getElementById("rsvpWord");
-
-  // Pause toggle (example)
-  pauseBtn.addEventListener("click", () => {
-    document.body.classList.toggle("paused");
-    pauseBtn.textContent = document.body.classList.contains("paused")
-      ? "▶️ Resume"
-      : "⏸️ Pause";
-  });
-
-  // Restart (just resets both screens for now)
-  restartBtn.addEventListener("click", () => {
-    marquee.scrollLeft = 0;
-    rsvpWord.textContent = "Restarted!";
-    document.body.classList.remove("paused");
-    pauseBtn.textContent = "⏸️ Pause";
-  });
-
-  // Hide/Show lines
-  hideLinesBtn.addEventListener("click", () => {
-    document.body.classList.toggle("hide-lines");
-    hideLinesBtn.textContent = document.body.classList.contains("hide-lines")
-      ? "🧾 Show Lines"
-      : "🧾 Hide Lines";
-  });
-
-  // Hide/Show screen
-  hideScreenBtn.addEventListener("click", () => {
-    document.body.classList.toggle("hide-screen");
-    hideScreenBtn.textContent = document.body.classList.contains("hide-screen")
-      ? "🕳️ Show Screen"
-      : "🕳️ Hide Screen";
-  });
-</script>
-
-
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="main-container">{content}</main>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>TextSpeeder © 2025 — All Rights Reserved</p>
+      </footer>
     </div>
   );
 }

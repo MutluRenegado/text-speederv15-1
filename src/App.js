@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import HomeScreen from "./screens/HomeScreen";
 import ReadingSessionScreen from "./screens/ReadingSessionScreen";
 import ResultsScreen from "./screens/ResultsScreen";
@@ -11,7 +11,13 @@ import "./AppLayout.css";
 export default function App() {
   const [view, setView] = useState("home");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const { currentUser, loading } = useAuth();
+
+  // Apply dark/light theme to <body>
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", darkMode);
+  }, [darkMode]);
 
   if (loading)
     return (
@@ -60,7 +66,13 @@ export default function App() {
         <div className="logo">📘 TextSpeeder</div>
 
         <div className="top-controls">
-          <button className="theme-toggle">🌗</button>
+          <button
+            className="theme-toggle"
+            onClick={() => setDarkMode((prev) => !prev)}
+            title="Toggle Dark/Light Mode"
+          >
+            {darkMode ? "🌙" : "☀️"}
+          </button>
 
           <button
             id="sidebarToggle"

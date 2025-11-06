@@ -10,7 +10,11 @@ export default function App() {
     setIsAccessibilityOpen(!isAccessibilityOpen);
 
   return (
-    <div className="app-root">
+    <div
+      className={`app-root ${
+        isAccessibilityOpen ? "accessibility-active" : ""
+      }`}
+    >
       {/* === HEADER === */}
       <header className="top-bar">
         <div className="top-left">

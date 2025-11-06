@@ -421,3 +421,23 @@ body.colorblind-tritanopia {
     font-size: 13px;
   }
 }
+
+/* === Button Alignment Fix === */
+.controls,
+.reader-controls,
+.upload-controls {
+  display: flex;
+  align-items: center;     /* ensures vertical alignment */
+  justify-content: flex-end; /* aligns to right edge */
+  gap: 10px;               /* equal spacing between buttons */
+  flex-wrap: wrap;         /* keeps layout responsive */
+}
+
+button {
+  display: inline-flex;
+  align-items: center;     /* centers text/icon vertically */
+  justify-content: center;
+  height: 40px;            /* consistent height */
+  line-height: 1;
+}
+

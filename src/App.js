@@ -5,19 +5,48 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAccessibilityOpen, setIsAccessibilityOpen] = useState(false);
   const [glowActive, setGlowActive] = useState(false);
+  const [vaultText, setVaultText] = useState(""); // invisible vault
+  const [displayText, setDisplayText] = useState(""); // text flowing in main content
+  const [isFlowing, setIsFlowing] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleAccessibility = () =>
     setIsAccessibilityOpen(!isAccessibilityOpen);
 
-  // Glow trigger every 5 minutes (300000 ms)
+  // 5-minute glow pulse
   useEffect(() => {
     const interval = setInterval(() => {
       setGlowActive(true);
-      setTimeout(() => setGlowActive(false), 4000); // Glow lasts 4s
+      setTimeout(() => setGlowActive(false), 4000);
     }, 300000);
     return () => clearInterval(interval);
   }, []);
+
+  // Handle file upload into vault
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => setVaultText(e.target.result || "");
+      reader.readAsText(file);
+    }
+  };
+
+  // Load text from vault to main display (smooth flow)
+  const handleLoadText = () => {
+    if (!vaultText) return;
+    setDisplayText(""); // reset
+    setIsFlowing(true);
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayText((prev) => prev + vaultText.charAt(i));
+      i++;
+      if (i >= vaultText.length) {
+        clearInterval(interval);
+        setIsFlowing(false);
+      }
+    }, 15); // adjust speed: smaller = faster
+  };
 
   return (
     <div
@@ -25,40 +54,87 @@ export default function App() {
         isAccessibilityOpen ? "accessibility-active" : ""
       }`}
     >
-      {/* === HEADER === */}
+      {/* Invisible vault */}
+      <div className="invisible-upload-layer">
+        <textarea
+          className="invisible-text-store"
+          value={vaultText}
+          readOnly
+        />
+      </div>
+
+      {/* HEADER */}
       <header className="top-bar">
         <div className="top-left">
-          <div className="logo">Text Speeder</div>
-        </div>
-
-        <div className="top-controls">
           <button
-            className={`theme-toggle ${glowActive ? "glow" : ""}`}
-            title="Toggle Theme"
-          >
-            🌓
-          </button>
-          <button
-            className={`menu-toggle ${glowActive ? "glow" : ""}`}
+            className={`menu-toggle ${glowActive ? "glow-yellow" : ""}`}
             onClick={toggleSidebar}
             title="Menu"
           >
             ☰
           </button>
+          <div className="logo">Text Speeder</div>
+        </div>
+        <div className="top-controls">
+          <button
+            className={`theme-toggle ${glowActive ? "glow-yellow" : ""}`}
+            title="Toggle Theme"
+          >
+            🌓
+          </button>
         </div>
       </header>
 
-      {/* === SIDEBAR === */}
+      {/* SIDEBAR */}
       <aside className={`sidebar ${isSidebarOpen ? "sidebar-open" : ""}`}>
         <div className="sidebar-content">
           <div className="sidebar-title">Menu</div>
-          <button className={glowActive ? "glow" : ""}>Home</button>
-          <button className={glowActive ? "glow" : ""}>Profile</button>
-          <button className={glowActive ? "glow" : ""}>Leaderboard</button>
+
+          {/* Upload button */}
+          <label
+            htmlFor="fileUpload"
+            className={`menu-btn upload-label ${
+              isSidebarOpen ? "" : "hidden"
+            }`}
+          >
+            Upload File
+          </label>
+          <input
+            id="fileUpload"
+            type="file"
+            accept=".txt,.md,.docx,.pdf"
+            onChange={handleFileUpload}
+            className={`upload-input ${isSidebarOpen ? "" : "hidden"}`}
+          />
+
+          {/* Load button */}
+          <button
+            className={`menu-btn ${glowActive ? "glow-pink" : ""} ${
+              isSidebarOpen ? "" : "hidden"
+            }`}
+            onClick={handleLoadText}
+          >
+            Load Text
+          </button>
+
+          <button
+            className={`menu-btn ${glowActive ? "glow-pink" : ""} ${
+              isSidebarOpen ? "" : "hidden"
+            }`}
+          >
+            Home
+          </button>
+          <button
+            className={`menu-btn ${glowActive ? "glow-pink" : ""} ${
+              isSidebarOpen ? "" : "hidden"
+            }`}
+          >
+            Profile
+          </button>
         </div>
       </aside>
 
-      {/* === ACCESSIBILITY HANDLE === */}
+      {/* ACCESSIBILITY HANDLE */}
       <img
         src="https://raw.githubusercontent.com/MutluRenegado/text-speeder-v15-1/main/assets/handle/accessibility-handle.png"
         alt="Accessibility handle"
@@ -66,7 +142,7 @@ export default function App() {
         onClick={toggleAccessibility}
       />
 
-      {/* === ACCESSIBILITY PANEL === */}
+      {/* ACCESSIBILITY PANEL */}
       <div
         className={`accessibility-panel ${
           isAccessibilityOpen ? "open" : ""
@@ -74,22 +150,25 @@ export default function App() {
       >
         <h3>Accessibility Mode</h3>
         <div className="accessibility-options">
-          <button className={glowActive ? "glow" : ""}>Increase Text Size</button>
-          <button className={glowActive ? "glow" : ""}>High Contrast</button>
-          <button className={glowActive ? "glow" : ""}>Dark Mode</button>
+          <button className={glowActive ? "glow-teal" : ""}>
+            Increase Text Size
+          </button>
+          <button className={glowActive ? "glow-teal" : ""}>
+            High Contrast
+          </button>
+          <button className={glowActive ? "glow-teal" : ""}>Dark Mode</button>
         </div>
       </div>
 
-      {/* === MAIN CONTENT === */}
+      {/* MAIN CONTENT */}
       <main className="main-content">
         <h2>Welcome to Text Speeder</h2>
         <p>
-          This is your reading and productivity dashboard. Use the sidebar to
-          navigate and the accessibility handle for display settings.
+          {displayText || "Upload a text file and click 'Load Text' to start flowing..."}
         </p>
+        {isFlowing && <div className="flow-indicator">⏳ Flowing...</div>}
       </main>
 
-      {/* === FOOTER === */}
       <footer className="footer">© 2025 Text Speeder v15.1</footer>
     </div>
   );

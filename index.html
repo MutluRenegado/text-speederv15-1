@@ -14,7 +14,7 @@
       --accent: #b6004a;
       --footer: #f6b659;
       --panel-dark: #0b1120;
-      --highlight: #FFD54F; /* single highlight color */
+      --highlight: #FFD54F;
     }
 
     /* small extras */
@@ -25,7 +25,33 @@
     .highlight { background: var(--highlight); color: black; border-radius: .25rem; padding: .05rem .25rem; }
     .flow-track { transition: transform .45s ease; white-space:nowrap; will-change:transform; }
     .rsvp-word { transition: all .12s ease; }
-    .hidden-by-js { display:none; } /* used to hide default placeholders until JS sets things up */
+    .hidden-by-js { display:none; }
+
+    /* private control grid layer */
+    #privateControlLayer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      z-index: 1000;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #privateControlLayer.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .private-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+      align-items: center;
+    }
   </style>
 </head>
 <body class="bg-white text-black antialiased">
@@ -36,28 +62,24 @@
     <header class="p-6" style="background:var(--turquoise)">
       <div class="max-w-[1100px] mx-auto flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <div class="hamb-circle" aria-hidden>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div class="hamb-circle cursor-pointer" id="sidebarToggleHeader" aria-hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
           <h1 class="font-serif text-2xl tracking-wider">TEXTSPEEDER</h1>
         </div>
 
         <div class="flex items-center gap-3">
-          <!-- dark/light toggle -->
           <button id="themeToggle" class="px-4 py-1 rounded-full bg-[#b6004a] text-black text-sm">dark/light</button>
-
-          <!-- hamburger in header near toggle (opens right sidebar) -->
-          <button id="sidebarToggleHeader" class="flex items-center gap-2 px-3 py-1 rounded-l-lg bg-black text-white text-sm">
-            <span class="text-lg">☰</span><span>Menu</span>
-          </button>
         </div>
       </div>
     </header>
 
-    <!-- MAIN (three turquoise panels + controls) -->
+    <!-- MAIN -->
     <main class="flex-1 max-w-[1100px] mx-auto w-full space-y-8 py-6 px-6">
 
-      <!-- Top short panel: upload / basic -->
+      <!-- Top short panel -->
       <section class="h-24 bg-[var(--turquoise)] rounded shadow-sm relative p-4 flex items-center justify-between">
         <div class="text-lg font-semibold">Upload your text</div>
         <div class="flex items-center gap-3">
@@ -67,18 +89,17 @@
         </div>
       </section>
 
-      <!-- Middle panel: Flow display (visible) -->
+      <!-- Flow display -->
       <section id="flowPanel" class="h-40 bg-[var(--turquoise)] rounded shadow-sm relative overflow-hidden p-4">
         <div class="absolute left-4 top-3 text-sm">Flow mode display</div>
         <div id="flowViewport" class="h-full flex items-center overflow-hidden">
           <div id="flowTrack" class="flow-track" style="transform:translateX(0);">
-            <!-- words inserted here -->
             <div id="flowWords" class="inline-block text-2xl font-semibold"></div>
           </div>
         </div>
       </section>
 
-      <!-- Bottom panel: RSVP display (visible) -->
+      <!-- RSVP display -->
       <section id="rsvpPanel" class="h-40 bg-[var(--turquoise)] rounded shadow-sm relative p-4 flex items-center justify-center">
         <div class="text-center">
           <div class="text-sm mb-2">RSVP mode display</div>
@@ -89,20 +110,20 @@
       </section>
 
       <!-- Controls row -->
-    <div class="col-span-3 space-y-3">
-  <div class="flex items-center gap-2">
-    <span class="text-sm">Mode:</span>
-    <select id="modeSelect" class="p-2 rounded bg-gray-100 flex-1">
-      <option value="flow">Flow</option>
-      <option value="rsvp">RSVP</option>
-    </select>
-  </div>
-
-  <div class="flex items-center gap-2">
-    <input id="highlightToggle" type="checkbox" checked />
-    <span class="text-sm">Enable highlight</span>
-  </div>
-</div>
+      <section class="grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">Mode:</span>
+            <select id="modeSelect" class="p-2 rounded bg-gray-100 flex-1">
+              <option value="flow">Flow</option>
+              <option value="rsvp">RSVP</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="highlightToggle" type="checkbox" checked />
+            <span class="text-sm">Enable highlight</span>
+          </div>
+        </div>
 
         <div class="col-span-3">
           <div class="text-sm">WPM (words per minute)</div>
@@ -123,14 +144,11 @@
 
     </main>
 
-    <!-- FOOTER (unchanged) -->
+    <!-- FOOTER -->
     <footer class="mt-8">
       <div class="bg-[var(--footer)] py-6">
         <div class="max-w-[1100px] mx-auto text-center">
           <div class="flex justify-center gap-8 mb-4">
-            <div class="font-bold text-xl">TEXT1</div>
-            <div class="font-bold text-xl">TEXT1</div>
-            <div class="font-bold text-xl">TEXT1</div>
             <div class="font-bold text-xl">TEXT1</div>
             <div class="font-bold text-xl">TEXT1</div>
             <div class="font-bold text-xl">TEXT1</div>
@@ -141,56 +159,49 @@
     </footer>
   </div>
 
-  <!-- RIGHT SIDEBAR + OVERLAY -->
-  <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 hidden z-40"></div>
+  <!-- PRIVATE CONTROL LAYER -->
+  <section id="privateControlLayer">
+    <div class="private-grid">
+      <div class="flex items-center gap-2">
+        <span class="text-sm">Mode:</span>
+        <select id="modeSelectPrivate" class="p-2 rounded bg-gray-100 flex-1">
+          <option value="flow">Flow</option>
+          <option value="rsvp">RSVP</option>
+        </select>
+        <button id="swapModeBtnPrivate" class="pill-sm">Swap</button>
+      </div>
 
+      <div class="flex items-center gap-2">
+        <span class="text-sm">WPM:</span>
+        <input id="wpmInputPrivate" type="number" min="50" max="2000" value="300"
+               class="w-24 p-2 rounded bg-gray-100" />
+        <input id="speedSliderPrivate" type="range" min="50" max="2000" value="300" class="flex-1" />
+      </div>
+
+      <div class="flex items-center gap-2 justify-center">
+        <button id="pauseBtnPrivate" class="pill-sm">Pause</button>
+        <button id="restartBtnPrivate" class="pill-sm">Restart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDEBAR -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 hidden z-40"></div>
   <aside id="sidebar" class="fixed top-0 right-0 h-full w-72 bg-[#020617] border-l border-gray-800 transform translate-x-full transition-transform duration-300 z-50">
     <div class="p-4 text-gray-200 h-full flex flex-col">
       <div class="flex items-center justify-between">
         <h3 class="uppercase tracking-wider text-gray-400">Navigation</h3>
         <button id="closeSidebar" class="text-red-400">✖</button>
       </div>
-
-      <nav class="mt-4 space-y-3 flex-1 overflow-auto">
-        <button class="w-full text-left hover:text-cyan-400" onclick="goHome()">🏠 Home</button>
-        <button class="w-full text-left hover:text-cyan-400" onclick="goProfile()">👤 Profile</button>
-        <button class="w-full text-left hover:text-cyan-400" onclick="goLeaderboard()">🏆 Leaderboard</button>
-
-        <div class="mt-4 border-t border-gray-700 pt-4">
-          <h4 class="text-sm text-gray-400 mb-2">Accessibility</h4>
-          <button id="accessibilitySidebarToggle" class="w-full text-left text-cyan-400 hover:text-cyan-300">♿ Open Accessibility</button>
-
-          <div id="accessibilityPanel" class="hidden mt-3 bg-[#0b1120] border border-gray-700 rounded-lg p-3 space-y-2">
-            <button id="closeAccessibilitySidebar" class="text-red-400 text-sm float-right">✖</button>
-            <h3 class="font-semibold mb-1 text-gray-200">Accessibility Options</h3>
-
-            <button data-mode="accessible-mode" class="w-full text-left hover:text-cyan-400">🟢 Accessible Mode</button>
-            <button data-mode="colorblind-deuteranopia" class="w-full text-left hover:text-cyan-400">🟡 Deuteranopia</button>
-            <button data-mode="colorblind-protanopia" class="w-full text-left hover:text-cyan-400">🔴 Protanopia</button>
-            <button data-mode="colorblind-tritanopia" class="w-full text-left hover:text-cyan-400">🔵 Tritanopia</button>
-
-            <button id="resetAccessibility" class="mt-2 w-full text-sm text-gray-300 hover:text-cyan-400 text-left">Reset</button>
-            <p id="accessibilityStatus" class="text-xs text-gray-400 mt-2">Mode: Default</p>
-          </div>
-        </div>
-      </nav>
-
-      <div class="mt-4 space-y-2">
-        <a class="text-sm text-gray-300 block" href="#">📜 License</a>
-        <a class="text-sm text-gray-300 block" href="#">🔐 Privacy</a>
-        <a class="text-sm text-gray-300 block" href="#">📘 Docs</a>
-      </div>
     </div>
   </aside>
 
-  <!-- REMOVE THIS IF DUPLICATED -->
-<div class="fixed right-6 bottom-28 flex gap-3 z-50">
-  <label for="fileUpload" class="pill-sm cursor-pointer">upload</label>
-  <button id="loadFileBtn" class="pill-sm">load</button>
-  <input id="fileUpload" type="file" accept=".txt" class="hidden" />
-</div>
-
-  
+  <!-- Floating Upload Buttons -->
+  <div class="fixed right-6 bottom-28 flex gap-3 z-50">
+    <label for="fileUpload" class="pill-sm cursor-pointer">upload</label>
+    <button id="loadFileBtn" class="pill-sm">load</button>
+    <input id="fileUpload" type="file" accept=".txt" class="hidden" />
+  </div>
 
   <script>
     /* -------------------------
@@ -200,30 +211,32 @@
     const sidebarToggleHeader = document.getElementById('sidebarToggleHeader');
     const closeSidebarBtn = document.getElementById('closeSidebar');
     const sidebarOverlay = document.getElementById('sidebarOverlay');
-
     const modeSelect = document.getElementById('modeSelect');
     const wpmInput = document.getElementById('wpmInput');
     const speedSlider = document.getElementById('speedSlider');
     const highlightToggle = document.getElementById('highlightToggle');
-
     const flowWordsEl = document.getElementById('flowWords');
     const flowTrack = document.getElementById('flowTrack');
     const flowViewport = document.getElementById('flowViewport');
-
     const rsvpWordEl = document.getElementById('rsvpWord');
     const rsvpPanel = document.getElementById('rsvpPanel');
     const flowPanel = document.getElementById('flowPanel');
-
     const pauseBtn = document.getElementById('pauseBtn');
     const restartBtn = document.getElementById('restartBtn');
     const swapModeBtn = document.getElementById('swapModeBtn');
-
     const fileUpload = document.getElementById('fileUpload');
     const loadFileBtn = document.getElementById('loadFileBtn');
     const fileUploadTop = document.getElementById('fileUploadTop');
     const loadSampleTop = document.getElementById('loadSampleTop');
-
     const themeToggle = document.getElementById('themeToggle');
+    const privateLayer = document.getElementById("privateControlLayer");
+
+    // Private toggle shortcut
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyC") {
+        privateLayer.classList.toggle("visible");
+      }
+    });
 
     // state
     let words = "This is a sample sentence you can replace by uploading a .txt file. The highlight color is the same in RSVP and Flow modes. Enjoy practicing speed reading.".split(/\s+/);
@@ -235,12 +248,9 @@
     let timerId = null;
 
     /* -------------------------
-       UTILS
+       Core logic unchanged
     ------------------------- */
-    function msPerWordFromWPM(wpm) {
-      return 60000 / Math.max(1, wpm);
-    }
-
+    function msPerWordFromWPM(wpm) { return 60000 / Math.max(1, wpm); }
     function renderFlowWords() {
       flowWordsEl.innerHTML = '';
       words.forEach((w, i) => {
@@ -250,85 +260,49 @@
         if (i === currentIndex && highlightEnabled) span.classList.add('highlight');
         flowWordsEl.appendChild(span);
       });
-      // set track transform starting at 0 (we position by translateX negative to show scrolling)
       flowTrack.style.transform = `translateX(0px)`;
-      // small delay to allow measurement
       setTimeout(()=> centerFlowOnIndex(currentIndex, false), 20);
     }
-
     function centerFlowOnIndex(idx, animate=true) {
-      // aim to position the flowTrack so that the highlighted word is roughly centered in viewport
       const spans = flowWordsEl.querySelectorAll('span');
       if (!spans.length) return;
       const target = spans[idx];
       if (!target) return;
-      // compute target's left relative to track
       const spanRect = target.getBoundingClientRect();
       const trackRect = flowTrack.getBoundingClientRect();
       const viewportRect = flowViewport.getBoundingClientRect();
       const spanCenter = (spanRect.left - trackRect.left) + (spanRect.width / 2);
       const viewportCenter = viewportRect.width / 2;
       const needed = viewportCenter - spanCenter;
-      if (!animate) flowTrack.style.transition = 'none';
-      else flowTrack.style.transition = 'transform .45s ease';
+      flowTrack.style.transition = animate ? 'transform .45s ease' : 'none';
       flowTrack.style.transform = `translateX(${needed}px)`;
-      if (!animate) {
-        // force reflow then restore transition
-        void flowTrack.offsetWidth;
-        flowTrack.style.transition = 'transform .45s ease';
-      }
+      if (!animate) { void flowTrack.offsetWidth; flowTrack.style.transition = 'transform .45s ease'; }
     }
-
     function highlightFlowIndex(idx) {
       const spans = flowWordsEl.querySelectorAll('span');
       spans.forEach(s => s.classList.remove('highlight'));
       if (highlightEnabled && spans[idx]) spans[idx].classList.add('highlight');
     }
-
     function renderRSVPIndex(idx) {
       const w = words[idx] || '';
       rsvpWordEl.textContent = w;
-      if (highlightEnabled) {
-        rsvpWordEl.classList.add('highlight');
-      } else {
-        rsvpWordEl.classList.remove('highlight');
-      }
+      if (highlightEnabled) rsvpWordEl.classList.add('highlight');
+      else rsvpWordEl.classList.remove('highlight');
     }
 
-    /* -------------------------
-       Controls: play / pause / step
-    ------------------------- */
-    function stopTicker() {
-      isRunning = false;
-      if (timerId) { clearTimeout(timerId); timerId = null; }
-    }
-
-    function startTicker() {
-      stopTicker();
-      isRunning = true;
-      scheduleNext();
-    }
-
+    function stopTicker() { isRunning = false; if (timerId) { clearTimeout(timerId); timerId = null; } }
+    function startTicker() { stopTicker(); isRunning = true; scheduleNext(); }
     function scheduleNext() {
       if (!isRunning) return;
       const delay = msPerWordFromWPM(wpm);
-      timerId = setTimeout(() => {
-        stepForward();
-        scheduleNext();
-      }, delay);
+      timerId = setTimeout(() => { stepForward(); scheduleNext(); }, delay);
     }
-
     function stepForward() {
       currentIndex++;
       if (currentIndex >= words.length) currentIndex = 0;
-      if (mode === 'rsvp') {
-        renderRSVPIndex(currentIndex);
-      } else {
-        highlightFlowIndex(currentIndex);
-        centerFlowOnIndex(currentIndex, true);
-      }
+      if (mode === 'rsvp') renderRSVPIndex(currentIndex);
+      else { highlightFlowIndex(currentIndex); centerFlowOnIndex(currentIndex, true); }
     }
-
     function restart() {
       currentIndex = 0;
       if (mode === 'rsvp') renderRSVPIndex(currentIndex);
@@ -336,15 +310,11 @@
       startTicker();
     }
 
-    /* -------------------------
-       Mode / UI wiring
-    ------------------------- */
     function applyMode(newMode) {
       mode = newMode;
       if (mode === 'rsvp') {
         flowPanel.classList.add('hidden-by-js');
         rsvpPanel.classList.remove('hidden-by-js');
-        rsvpPanel.classList.remove('opacity-0');
         renderRSVPIndex(currentIndex);
       } else {
         rsvpPanel.classList.add('hidden-by-js');
@@ -355,56 +325,37 @@
       }
     }
 
-    modeSelect.addEventListener('change', (e)=> {
-      applyMode(e.target.value);
-    });
-
+    modeSelect.addEventListener('change', (e)=> applyMode(e.target.value));
     swapModeBtn.addEventListener('click', () => {
       const nxt = mode === 'flow' ? 'rsvp' : 'flow';
       modeSelect.value = nxt;
       applyMode(nxt);
     });
-
     wpmInput.addEventListener('input', (e) => {
       const v = parseInt(e.target.value || 300, 10);
       if (!isNaN(v) && v > 0) { wpm = v; speedSlider.value = v; }
     });
-
     speedSlider.addEventListener('input', (e) => {
       const v = parseInt(e.target.value || 300, 10);
       if (!isNaN(v) && v > 0) { wpm = v; wpmInput.value = v; }
     });
-
     highlightToggle.addEventListener('change', (e) => {
       highlightEnabled = e.target.checked;
       if (mode === 'rsvp') renderRSVPIndex(currentIndex);
       else highlightFlowIndex(currentIndex);
     });
-
     pauseBtn.addEventListener('click', () => {
       if (isRunning) { stopTicker(); pauseBtn.textContent = 'resume'; }
       else { startTicker(); pauseBtn.textContent = 'pause'; }
     });
+    restartBtn.addEventListener('click', () => { restart(); pauseBtn.textContent = 'pause'; });
 
-    restartBtn.addEventListener('click', () => {
-      restart();
-      pauseBtn.textContent = 'pause';
-    });
-
-    /* -------------------------
-       File upload / load
-    ------------------------- */
     function loadTextString(str) {
-      // sanitize: collapse newlines into spaces and trim
       const s = (str || '').replace(/\r?\n+/g, ' ').trim();
       words = s.split(/\s+/).filter(Boolean);
       currentIndex = 0;
-      renderFlowWords();
-      renderRSVPIndex(0);
-      // restart ticker so user sees from beginning
-      restart();
+      renderFlowWords(); renderRSVPIndex(0); restart();
     }
-
     fileUpload.addEventListener('change', (e) => {
       const f = e.target.files[0];
       if (!f) return;
@@ -412,12 +363,9 @@
       reader.onload = (ev) => loadTextString(ev.target.result || '');
       reader.readAsText(f);
     });
-
     loadFileBtn.addEventListener('click', () => {
-      // quick sample load
-      loadTextString("Loaded sample: Speed reading with TextSpeeder. Try adjusting WPM and toggle highlight to focus on each incoming word.");
+      loadTextString("Loaded sample: Speed reading with TextSpeeder.");
     });
-
     fileUploadTop.addEventListener('change', (e) => {
       const f = e.target.files[0];
       if (!f) return;
@@ -425,36 +373,26 @@
       reader.onload = (ev) => loadTextString(ev.target.result || '');
       reader.readAsText(f);
     });
-
     loadSampleTop.addEventListener('click', () => {
-      loadTextString("Top sample loaded. This text will be used for both flow and RSVP displays. Practice, pause, restart, and enjoy.");
+      loadTextString("Top sample loaded. Practice speed reading smoothly!");
     });
-
-    /* -------------------------
-       Sidebar open/close
-    ------------------------- */
-    function openSidebar() {
-      sidebar.classList.remove('translate-x-full');
-      sidebarOverlay.classList.remove('hidden');
-    }
-    function closeSidebar() {
-      sidebar.classList.add('translate-x-full');
-      sidebarOverlay.classList.add('hidden');
-    }
 
     sidebarToggleHeader.addEventListener('click', () => {
-      if (sidebar.classList.contains('translate-x-full')) openSidebar();
-      else closeSidebar();
+      if (sidebar.classList.contains('translate-x-full')) {
+        sidebar.classList.remove('translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      }
     });
-    closeSidebarBtn.addEventListener('click', closeSidebar);
-    sidebarOverlay.addEventListener('click', closeSidebar);
-
-    // accessibility toggles
-    document.getElementById('accessibilitySidebarToggle').addEventListener('click', () => {
-      document.getElementById('accessibilityPanel').classList.toggle('hidden');
+    closeSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.add('translate-x-full');
+      sidebarOverlay.classList.add('hidden');
     });
-    document.getElementById('closeAccessibilitySidebar').addEventListener('click', () => {
-      document.getElementById('accessibilityPanel').classList.add('hidden');
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.add('translate-x-full');
+      sidebarOverlay.classList.add('hidden');
     });
 
     /* -------------------------
@@ -462,62 +400,26 @@
     ------------------------- */
     function setDark(dark) {
       if (dark) {
-        document.documentElement.style.setProperty('--panel-dark', '#0b1120');
-        document.body.classList.add('bg-[#0b1120]');
-        document.body.classList.add('text-gray-100');
+        document.body.classList.add('bg-[#0b1120]', 'text-gray-100');
       } else {
-        document.documentElement.style.setProperty('--panel-dark', 'white');
-        document.body.classList.remove('bg-[#0b1120]');
-        document.body.classList.remove('text-gray-100');
+        document.body.classList.remove('bg-[#0b1120]', 'text-gray-100');
       }
       localStorage.setItem('ts-dark', dark ? '1' : '0');
     }
-
     const stored = localStorage.getItem('ts-dark');
     setDark(stored === null ? true : stored === '1');
-
     themeToggle.addEventListener('click', () => {
       const now = localStorage.getItem('ts-dark') === '1';
       setDark(!now);
     });
 
     /* -------------------------
-       Init render & start
+       Init
     ------------------------- */
-    // prepare initial UI visibility
-    flowPanel.classList.remove('hidden-by-js'); // ensure visible
-    rsvpPanel.classList.remove('hidden-by-js'); // will be hidden by applyMode if needed
-
-    applyMode(mode);
-    renderFlowWords();
-    renderRSVPIndex(0);
-    startTicker();
-
-    // small safety: ensure overlay hidden initially
+    flowPanel.classList.remove('hidden-by-js');
+    rsvpPanel.classList.remove('hidden-by-js');
+    applyMode(mode); renderFlowWords(); renderRSVPIndex(0); startTicker();
     sidebarOverlay.classList.add('hidden');
-
-    /* -------------------------
-       small demo nav functions
-    ------------------------- */
-    function goHome(){ alert('Go to Home screen'); }
-    function goProfile(){ alert('Go to Profile screen'); }
-    function goLeaderboard(){ alert('Go to Leaderboard screen'); }
-
-    // expose for debugging
-    window.ts = { loadTextString, startTicker, stopTicker, restart };
   </script>
-  <!-- ♿ Accessibility Handle (opens accessibility panel only) -->
-<button
-  id="accessibilityHandle"
-  class="fixed top-1/2 right-0 transform -translate-y-1/2 z-50 bg-[#b6004a] p-2 rounded-l-lg hover:bg-[#d9155a] transition"
-  aria-label="Open Accessibility"
->
-  <img
-    src="src/handle/accessibility-handle.png"
-    alt="Accessibility Handle"
-    class="w-8 h-8"
-  />
-</button>
-
 </body>
 </html>

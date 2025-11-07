@@ -1,1 +1,94 @@
+:root {
+  --bg-dark: #0b1120;
+  --text-dark: #e4e6eb;
+  --accent: #27d0c6;
+  --highlight: #ffd580;
+  --panel: #1b2430;
+  --radius: 10px;
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+/* Wrapper */
+.reader-wrapper {
+  background: var(--bg-dark);
+  color: var(--text-dark);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* Input box */
+.reader-input {
+  width: 100%;
+  height: 120px;
+  background: var(--panel);
+  color: var(--text-dark);
+  border: 1px solid #333;
+  border-radius: var(--radius);
+  padding: 0.75rem;
+  font-size: 1rem;
+  resize: vertical;
+  outline: none;
+}
+.reader-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(39, 208, 198, 0.4);
+}
+
+/* Reading Display */
+.reader-display {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 2rem;
+  font-weight: 600;
+  background: var(--panel);
+  border-radius: var(--radius);
+  border: 1px solid #333;
+  color: var(--text-dark);
+  box-shadow: var(--shadow-soft);
+}
+
+.reader-word {
+  background: var(--highlight);
+  color: #111;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* Controls */
+.reader-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.reader-controls button {
+  background: var(--accent);
+  color: black;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.reader-controls button:hover {
+  transform: scale(1.05);
+  background: #1fa89d;
+}
+
+.reader-speed {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.reader-speed input[type="range"] {
+  width: 150px;
+  accent-color: var(--accent);
+}
 

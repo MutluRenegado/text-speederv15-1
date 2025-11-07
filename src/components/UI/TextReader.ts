@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from "react";
+import TextReader from "../components/UI/TextReader";
+
 
 export interface ReaderOptions {
   words: string[];

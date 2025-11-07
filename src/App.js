@@ -173,3 +173,29 @@ export default function App() {
     </div>
   );
 }
+
+
+{/* 🧪 Temporary reader test in center */}
+<div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "70vh",
+    backgroundColor: "#0b1120",
+  }}
+>
+  <div
+    style={{
+      border: "2px solid #27d0c6",
+      borderRadius: "12px",
+      padding: "2rem",
+      width: "700px",
+      maxWidth: "90%",
+      boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
+    }}
+  >
+    <ReadingSessionScreen />
+  </div>
+</div>
+

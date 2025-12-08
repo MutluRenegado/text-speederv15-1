@@ -1,1 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TextSpeeder — Flow & RSVP with Highlight</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root{
+      --turquoise: #27d0c6;
+      --accent: #b6004a;
+      --footer: #f6b659;
+      --panel-dark: #0b1120;
+      --highlight: #FFD54F;
+    }
+
+    /* THEME VARIANTS */
+    .light-mode {
+      --bg: #d1d5db;      /* grey background */
+      --box: #000000;     /* black boxes */
+      --text: #ffffff;    /* white text */
+    }
+    .dark-mode {
+      --bg: #0b1120;
+      --box: #1f2937;
+      --text: #e5e7eb;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .panel {
+      background: var(--box);
+      color: var(--text);
+    }
+
+    /* small extras */
+    .pill {
+      border-radius: 999px;
+      background: var(--accent);
+      color: black;
+      padding: 0.45rem 0.9rem;
+      font-weight:500;
+    }
+    .pill-sm {
+      border-radius: 999px;
+      background: var(--accent);
+      color: black;
+      padding: 0.45rem 0.8rem;
+      font-size:0.9rem;
+    }
+    .hamb-circle {
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:black;
+      color:white;
+    }
+    #flowWords span {
+      display:inline-block;
+      padding:0 .35rem;
+      transition: color .15s, background-color .15s, transform .15s;
+    }
+    .highlight {
+      background: var(--highlight);
+      color: black;
+      border-radius: .25rem;
+      padding: .05rem .25rem;
+    }
+    .flow-track {
+      transition: transform .45s ease;
+      white-space:nowrap;
+      will-change:transform;
+    }
+    .rsvp-word { transition: all .12s ease; }
+    .hidden-by-js { display:none; }
+
+    /* private control grid layer */
+    #privateControlLayer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #e5e7eb;
+      padding: 1rem 2rem;
+      z-index: 1000;
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    #privateControlLayer.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .private-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+      align-items: center;
+    }
+  </style>
+</head>
+
+<body class="light-mode antialiased">
+  <div id="app" class="min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="p-6 panel">
+      <div class="max-w-[1100px] mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <div class="hamb-circle cursor-pointer" id="sidebarToggleHeader" aria-hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1 class="font-serif text-2xl tracking-wider">TEXTSPEEDER</h1>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="themeToggle" class="px-4 py-1 rounded-full bg-[#b6004a] text-black text-sm">
+            dark/light
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="flex-1 max-w-[1100px] mx-auto w-full space-y-8 py-6 px-6">
+
+      <!-- Top short panel -->
+      <section class="panel h-24 rounded shadow-sm relative p-4 flex items-center justify-between">
+        <div class="text-lg font-semibold">Upload your text</div>
+        <div class="flex items-center gap-3">
+          <label for="fileUploadTop" class="pill cursor-pointer">Upload</label>
+          <button id="loadSampleTop" class="pill">Load sample</button>
+          <input id="fileUploadTop" type="file" accept=".txt" class="hidden" />
+        </div>
+      </section>
+
+      <!-- Flow display -->
+      <section id="flowPanel" class="panel h-40 rounded shadow-sm relative overflow-hidden p-4">
+        <div class="absolute left-4 top-3 text-sm">Flow mode display</div>
+        <div id="flowViewport" class="h-full flex items-center overflow-hidden">
+          <div id="flowTrack" class="flow-track" style="transform:translateX(0);">
+            <div id="flowWords" class="inline-block text-2xl font-semibold"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RSVP display -->
+      <section id="rsvpPanel" class="panel h-40 rounded shadow-sm relative p-4 flex items-center justify-center">
+        <div class="text-center">
+          <div class="text-sm mb-2">RSVP mode display</div>
+          <div id="rsvpContainer" class="text-4xl font-bold rsvp-word">
+            <span id="rsvpWord">—</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls row -->
+      <section class="grid grid-cols-12 gap-4 items-start">
+        <div class="col-span-3 space-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm">Mode:</span>
+            <select id="modeSelect" class="p-2 rounded bg-gray-100 flex-1 text-black">
+              <option value="flow">Flow</option>
+              <option value="rsvp">RSVP</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <input id="highlightToggle" type="checkbox" checked />
+            <span class="text-sm">Enable highlight</span>
+          </div>
+        </div>
+
+        <div class="col-span-3">
+          <div class="text-sm">WPM (words per minute)</div>
+          <input id="wpmInput" type="number" min="50" max="2000" value="300"
+                 class="w-full p-2 rounded bg-gray-100 text-black" />
+        </div>
+
+        <div class="col-span-4">
+          <div class="text-sm">Speed slider (for smoother tuning)</div>
+          <input id="speedSlider" type="range" min="50" max="2000" value="300" class="w-full" />
+        </div>
+
+        <div class="col-span-2 flex flex-col gap-2">
+          <button id="pauseBtn" class="pill-sm">pause</button>
+          <button id="restartBtn" class="pill-sm">restart</button>
+          <button id="swapModeBtn" class="pill-sm">swap mode</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="mt-8">
+      <div class="bg-[var(--footer)] py-6">
+        <div class="max-w-[1100px] mx-auto text-center">
+          <div class="flex justify-center gap-8 mb-4">
+            <div class="font-bold text-xl">TEXT1</div>
+            <div class="font-bold text-xl">TEXT1</div>
+            <div class="font-bold text-xl">TEXT1</div>
+          </div>
+          <div class="text-2xl font-serif">Textspeeder 2025 All Rights Reserved</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <footer class="footer">
+  <nav class="footer-links">
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
+
+  <span class="footer-divider">|</span>
+  <span class="footer-copy">© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span>
+  <span class="footer-divider">|</span>
+  </nav>
+
+</footer>
+
+<script>
+  // 🔧 Auto-update footer year
+  document.addEventListener("DOMContentLoaded", () => {
+    const yearSpan = document.getElementById("currentYear");
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+  });
+</script>
+
+  <!-- PRIVATE CONTROL LAYER -->
+  <section id="privateControlLayer">
+    <div class="private-grid">
+      <div class="flex items-center gap-2">
+        <span class="text-sm">Mode:</span>
+        <select id="modeSelectPrivate" class="p-2 rounded bg-gray-100 flex-1 text-black">
+          <option value="flow">Flow</option>
+          <option value="rsvp">RSVP</option>
+        </select>
+        <button id="swapModeBtnPrivate" class="pill-sm">Swap</button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-sm">WPM:</span>
+        <input id="wpmInputPrivate" type="number" min="50" max="2000" value="300"
+               class="w-24 p-2 rounded bg-gray-100 text-black" />
+        <input id="speedSliderPrivate" type="range" min="50" max="2000" value="300" class="flex-1" />
+      </div>
+
+      <div class="flex items-center gap-2 justify-center">
+        <button id="pauseBtnPrivate" class="pill-sm">Pause</button>
+        <button id="restartBtnPrivate" class="pill-sm">Restart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIDEBAR -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/40 hidden z-40"></div>
+  <aside id="sidebar" class="fixed top-0 right-0 h-full w-72 bg-[#020617] border-l border-gray-800 transform translate-x-full transition-transform duration-300 z-50">
+    <div class="p-4 text-gray-200 h-full flex flex-col">
+      <div class="flex items-center justify-between">
+        <h3 class="uppercase tracking-wider text-gray-400">Navigation</h3>
+        <button id="closeSidebar" class="text-red-400">✖</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Floating Upload Buttons -->
+  <div class="fixed right-6 bottom-28 flex gap-3 z-50">
+    <label for="fileUpload" class="pill-sm cursor-pointer">upload</label>
+    <button id="loadFileBtn" class="pill-sm">load</button>
+    <input id="fileUpload" type="file" accept=".txt" class="hidden" />
+  </div>
+
+  <script>
+    /* -------------------------
+       DOM refs & state
+    ------------------------- */
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggleHeader = document.getElementById('sidebarToggleHeader');
+    const closeSidebarBtn = document.getElementById('closeSidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const modeSelect = document.getElementById('modeSelect');
+    const wpmInput = document.getElementById('wpmInput');
+    const speedSlider = document.getElementById('speedSlider');
+    const highlightToggle = document.getElementById('highlightToggle');
+    const flowWordsEl = document.getElementById('flowWords');
+    const flowTrack = document.getElementById('flowTrack');
+    const flowViewport = document.getElementById('flowViewport');
+    const rsvpWordEl = document.getElementById('rsvpWord');
+    const rsvpPanel = document.getElementById('rsvpPanel');
+    const flowPanel = document.getElementById('flowPanel');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const swapModeBtn = document.getElementById('swapModeBtn');
+    const fileUpload = document.getElementById('fileUpload');
+    const loadFileBtn = document.getElementById('loadFileBtn');
+    const fileUploadTop = document.getElementById('fileUploadTop');
+    const loadSampleTop = document.getElementById('loadSampleTop');
+    const themeToggle = document.getElementById('themeToggle');
+    const privateLayer = document.getElementById("privateControlLayer");
+
+    // Private toggle shortcut
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.shiftKey && e.code === "KeyC") {
+        privateLayer.classList.toggle("visible");
+      }
+    });
+
+    // state
+    let words = "This is a sample sentence you can replace by uploading a .txt file. The highlight color is the same in RSVP and Flow modes. Enjoy practicing speed reading.".split(/\s+/);
+    let mode = modeSelect.value || 'flow';
+    let wpm = parseInt(wpmInput.value || 300, 10);
+    let isRunning = true;
+    let highlightEnabled = highlightToggle.checked;
+    let currentIndex = 0;
+    let timerId = null;
+
+    /* -------------------------
+       Core logic unchanged
+    ------------------------- */
+    function msPerWordFromWPM(wpm) { return 60000 / Math.max(1, wpm); }
+    function renderFlowWords() {
+      flowWordsEl.innerHTML = '';
+      words.forEach((w, i) => {
+        const span = document.createElement('span');
+        span.textContent = w;
+        span.dataset.index = i;
+        if (i === currentIndex && highlightEnabled) span.classList.add('highlight');
+        flowWordsEl.appendChild(span);
+      });
+      flowTrack.style.transform = `translateX(0px)`;
+      setTimeout(()=> centerFlowOnIndex(currentIndex, false), 20);
+    }
+    function centerFlowOnIndex(idx, animate=true) {
+      const spans = flowWordsEl.querySelectorAll('span');
+      if (!spans.length) return;
+      const target = spans[idx];
+      if (!target) return;
+      const spanRect = target.getBoundingClientRect();
+      const trackRect = flowTrack.getBoundingClientRect();
+      const viewportRect = flowViewport.getBoundingClientRect();
+      const spanCenter = (spanRect.left - trackRect.left) + (spanRect.width / 2);
+      const viewportCenter = viewportRect.width / 2;
+      const needed = viewportCenter - spanCenter;
+      flowTrack.style.transition = animate ? 'transform .45s ease' : 'none';
+      flowTrack.style.transform = `translateX(${needed}px)`;
+      if (!animate) { void flowTrack.offsetWidth; flowTrack.style.transition = 'transform .45s ease'; }
+    }
+    function highlightFlowIndex(idx) {
+      const spans = flowWordsEl.querySelectorAll('span');
+      spans.forEach(s => s.classList.remove('highlight'));
+      if (highlightEnabled && spans[idx]) spans[idx].classList.add('highlight');
+    }
+    function renderRSVPIndex(idx) {
+      const w = words[idx] || '';
+      rsvpWordEl.textContent = w;
+      if (highlightEnabled) rsvpWordEl.classList.add('highlight');
+      else rsvpWordEl.classList.remove('highlight');
+    }
+
+    function stopTicker() { isRunning = false; if (timerId) { clearTimeout(timerId); timerId = null; } }
+    function startTicker() { stopTicker(); isRunning = true; scheduleNext(); }
+    function scheduleNext() {
+      if (!isRunning) return;
+      const delay = msPerWordFromWPM(wpm);
+      timerId = setTimeout(() => { stepForward(); scheduleNext(); }, delay);
+    }
+    function stepForward() {
+      currentIndex++;
+      if (currentIndex >= words.length) currentIndex = 0;
+      if (mode === 'rsvp') renderRSVPIndex(currentIndex);
+      else { highlightFlowIndex(currentIndex); centerFlowOnIndex(currentIndex, true); }
+    }
+    function restart() {
+      currentIndex = 0;
+      if (mode === 'rsvp') renderRSVPIndex(currentIndex);
+      else { renderFlowWords(); highlightFlowIndex(currentIndex); centerFlowOnIndex(currentIndex, false); }
+      startTicker();
+    }
+
+    function applyMode(newMode) {
+      mode = newMode;
+      if (mode === 'rsvp') {
+        flowPanel.classList.add('hidden-by-js');
+        rsvpPanel.classList.remove('hidden-by-js');
+        renderRSVPIndex(currentIndex);
+      } else {
+        rsvpPanel.classList.add('hidden-by-js');
+        flowPanel.classList.remove('hidden-by-js');
+        renderFlowWords();
+        highlightFlowIndex(currentIndex);
+        centerFlowOnIndex(currentIndex, false);
+      }
+    }
+
+    modeSelect.addEventListener('change', (e)=> applyMode(e.target.value));
+    swapModeBtn.addEventListener('click', () => {
+      const nxt = mode === 'flow' ? 'rsvp' : 'flow';
+      modeSelect.value = nxt;
+      applyMode(nxt);
+    });
+    wpmInput.addEventListener('input', (e) => {
+      const v = parseInt(e.target.value || 300, 10);
+      if (!isNaN(v) && v > 0) { wpm = v; speedSlider.value = v; }
+    });
+    speedSlider.addEventListener('input', (e) => {
+      const v = parseInt(e.target.value || 300, 10);
+      if (!isNaN(v) && v > 0) { wpm = v; wpmInput.value = v; }
+    });
+    highlightToggle.addEventListener('change', (e) => {
+      highlightEnabled = e.target.checked;
+      if (mode === 'rsvp') renderRSVPIndex(currentIndex);
+      else highlightFlowIndex(currentIndex);
+    });
+    pauseBtn.addEventListener('click', () => {
+      if (isRunning) { stopTicker(); pauseBtn.textContent = 'resume'; }
+      else { startTicker(); pauseBtn.textContent = 'pause'; }
+    });
+    restartBtn.addEventListener('click', () => { restart(); pauseBtn.textContent = 'pause'; });
+
+    function loadTextString(str) {
+      const s = (str || '').replace(/\r?\n+/g, ' ').trim();
+      words = s.split(/\s+/).filter(Boolean);
+      currentIndex = 0;
+      renderFlowWords(); renderRSVPIndex(0); restart();
+    }
+    fileUpload.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => loadTextString(ev.target.result || '');
+      reader.readAsText(f);
+    });
+    loadFileBtn.addEventListener('click', () => {
+      loadTextString("Loaded sample: Speed reading with TextSpeeder.");
+    });
+    fileUploadTop.addEventListener('change', (e) => {
+      const f = e.target.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => loadTextString(ev.target.result || '');
+      reader.readAsText(f);
+    });
+    loadSampleTop.addEventListener('click', () => {
+      loadTextString("Top sample loaded. Practice speed reading smoothly!");
+    });
+
+    sidebarToggleHeader.addEventListener('click', () => {
+      if (sidebar.classList.contains('translate-x-full')) {
+        sidebar.classList.remove('translate-x-full');
+        sidebarOverlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('translate-x-full');
+        sidebarOverlay.classList.add('hidden');
+      }
+    });
+    closeSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.add('translate-x-full');
+      sidebarOverlay.classList.add('hidden');
+    });
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.add('translate-x-full');
+      sidebarOverlay.classList.add('hidden');
+    });
+
+    /* -------------------------
+       Theme toggle
+    ------------------------- */
+    function setDark(isDark) {
+      document.body.classList.toggle('dark-mode', isDark);
+      document.body.classList.toggle('light-mode', !isDark);
+      localStorage.setItem('ts-dark', isDark ? '1' : '0');
+    }
+
+    const stored = localStorage.getItem('ts-dark');
+    setDark(stored === '1');   // default = light if nothing stored
+
+    themeToggle.addEventListener('click', () => {
+      const nowDark = localStorage.getItem('ts-dark') === '1';
+      setDark(!nowDark);
+    });
+
+    /* -------------------------
+       Init
+    ------------------------- */
+    flowPanel.classList.remove('hidden-by-js');
+    rsvpPanel.classList.remove('hidden-by-js');
+    applyMode(mode);
+    renderFlowWords();
+    renderRSVPIndex(0);
+    startTicker();
+    sidebarOverlay.classList.add('hidden');
+  </script>
+</body>
+</html>
 

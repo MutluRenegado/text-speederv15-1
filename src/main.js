@@ -3,20 +3,27 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 
-// ✅ Import global CSS (Tailwind)
+// Global CSS (Tailwind or your stylesheet)
 import "./index.css";
 
-// ✅ Import Firebase setup
-import "./firebase/firebaseConfig";
+// Firebase initialization
+import "./firebase/firebase.config";
 
-// ✅ Import Auth Provider (optional if you have useAuth context)
+// Auth provider
 import { AuthProvider } from "./contexts/AuthContext";
 
+// Router
+import { BrowserRouter } from "react-router-dom";
+
+// ----------------------------
+// Render App with Providers
+// ----------------------------
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );
-

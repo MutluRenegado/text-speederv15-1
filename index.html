@@ -17,13 +17,69 @@
       --highlight: #FFD54F;
     }
 
+    /* THEME VARIANTS */
+    .light-mode {
+      --bg: #d1d5db;      /* grey background */
+      --box: #000000;     /* black boxes */
+      --text: #ffffff;    /* white text */
+    }
+    .dark-mode {
+      --bg: #0b1120;
+      --box: #1f2937;
+      --text: #e5e7eb;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .panel {
+      background: var(--box);
+      color: var(--text);
+    }
+
     /* small extras */
-    .pill { border-radius: 999px; background: var(--accent); color: black; padding: 0.45rem 0.9rem; font-weight:500; }
-    .pill-sm { border-radius: 999px; background: var(--accent); color: black; padding: 0.45rem 0.8rem; font-size:0.9rem; }
-    .hamb-circle { width:34px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center;background:black;color:white; }
-    #flowWords span { display:inline-block; padding:0 .35rem; transition: color .15s, background-color .15s, transform .15s; }
-    .highlight { background: var(--highlight); color: black; border-radius: .25rem; padding: .05rem .25rem; }
-    .flow-track { transition: transform .45s ease; white-space:nowrap; will-change:transform; }
+    .pill {
+      border-radius: 999px;
+      background: var(--accent);
+      color: black;
+      padding: 0.45rem 0.9rem;
+      font-weight:500;
+    }
+    .pill-sm {
+      border-radius: 999px;
+      background: var(--accent);
+      color: black;
+      padding: 0.45rem 0.8rem;
+      font-size:0.9rem;
+    }
+    .hamb-circle {
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:black;
+      color:white;
+    }
+    #flowWords span {
+      display:inline-block;
+      padding:0 .35rem;
+      transition: color .15s, background-color .15s, transform .15s;
+    }
+    .highlight {
+      background: var(--highlight);
+      color: black;
+      border-radius: .25rem;
+      padding: .05rem .25rem;
+    }
+    .flow-track {
+      transition: transform .45s ease;
+      white-space:nowrap;
+      will-change:transform;
+    }
     .rsvp-word { transition: all .12s ease; }
     .hidden-by-js { display:none; }
 
@@ -52,28 +108,14 @@
       gap: 1rem;
       align-items: center;
     }
-    .light-mode {
-  --bg: #d1d5db;      /* grey background */
-  --box: #000000;     /* black boxes */
-  --text: #ffffff;   
-    }
-    .dark-mode {
-  --bg: #0b1120;
-  --box: #1a2238;
-  --text: #e5e7eb;
-}
-
-}
- 
-
   </style>
 </head>
-<body class="bg-white text-black antialiased">
 
+<body class="light-mode antialiased">
   <div id="app" class="min-h-screen flex flex-col">
 
     <!-- HEADER -->
-    <header class="p-6" style="background:var(--turquoise)">
+    <header class="p-6 panel">
       <div class="max-w-[1100px] mx-auto flex items-center justify-between">
         <div class="flex items-center gap-4">
           <div class="hamb-circle cursor-pointer" id="sidebarToggleHeader" aria-hidden>
@@ -85,7 +127,9 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button id="themeToggle" class="px-4 py-1 rounded-full bg-[#b6004a] text-black text-sm">dark/light</button>
+          <button id="themeToggle" class="px-4 py-1 rounded-full bg-[#b6004a] text-black text-sm">
+            dark/light
+          </button>
         </div>
       </div>
     </header>
@@ -94,7 +138,7 @@
     <main class="flex-1 max-w-[1100px] mx-auto w-full space-y-8 py-6 px-6">
 
       <!-- Top short panel -->
-      <section class="h-24 bg-[var(--turquoise)] rounded shadow-sm relative p-4 flex items-center justify-between">
+      <section class="panel h-24 rounded shadow-sm relative p-4 flex items-center justify-between">
         <div class="text-lg font-semibold">Upload your text</div>
         <div class="flex items-center gap-3">
           <label for="fileUploadTop" class="pill cursor-pointer">Upload</label>
@@ -104,7 +148,7 @@
       </section>
 
       <!-- Flow display -->
-      <section id="flowPanel" class="h-40 bg-[var(--turquoise)] rounded shadow-sm relative overflow-hidden p-4">
+      <section id="flowPanel" class="panel h-40 rounded shadow-sm relative overflow-hidden p-4">
         <div class="absolute left-4 top-3 text-sm">Flow mode display</div>
         <div id="flowViewport" class="h-full flex items-center overflow-hidden">
           <div id="flowTrack" class="flow-track" style="transform:translateX(0);">
@@ -114,7 +158,7 @@
       </section>
 
       <!-- RSVP display -->
-      <section id="rsvpPanel" class="h-40 bg-[var(--turquoise)] rounded shadow-sm relative p-4 flex items-center justify-center">
+      <section id="rsvpPanel" class="panel h-40 rounded shadow-sm relative p-4 flex items-center justify-center">
         <div class="text-center">
           <div class="text-sm mb-2">RSVP mode display</div>
           <div id="rsvpContainer" class="text-4xl font-bold rsvp-word">
@@ -128,7 +172,7 @@
         <div class="col-span-3 space-y-3">
           <div class="flex items-center gap-2">
             <span class="text-sm">Mode:</span>
-            <select id="modeSelect" class="p-2 rounded bg-gray-100 flex-1">
+            <select id="modeSelect" class="p-2 rounded bg-gray-100 flex-1 text-black">
               <option value="flow">Flow</option>
               <option value="rsvp">RSVP</option>
             </select>
@@ -141,7 +185,8 @@
 
         <div class="col-span-3">
           <div class="text-sm">WPM (words per minute)</div>
-          <input id="wpmInput" type="number" min="50" max="2000" value="300" class="w-full p-2 rounded bg-gray-100" />
+          <input id="wpmInput" type="number" min="50" max="2000" value="300"
+                 class="w-full p-2 rounded bg-gray-100 text-black" />
         </div>
 
         <div class="col-span-4">
@@ -173,12 +218,40 @@
     </footer>
   </div>
 
+  <footer class="footer">
+  <nav class="footer-links">
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Licence" target="_blank" rel="noopener noreferrer">📜 License</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Privacy-Policy" target="_blank" rel="noopener noreferrer">🔐 Privacy</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki" target="_blank" rel="noopener noreferrer">📘 Docs</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Features" target="_blank" rel="noopener noreferrer">✨ Features</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/FAQ" target="_blank" rel="noopener noreferrer">💬 FAQ</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Customization" target="_blank" rel="noopener noreferrer">🎨 Customization</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/keyboard%E2%80%90shortcuts" target="_blank" rel="noopener noreferrer">⌨️ Shortcuts</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Roadmap" target="_blank" rel="noopener noreferrer">🗺️ Roadmap</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/ReadMe" target="_blank" rel="noopener noreferrer">📖 ReadMe</a>
+    <a href="https://github.com/MutluRenegado/text-speeder-docs/wiki/Contact" target="_blank" rel="noopener noreferrer">📬 Contact</a>
+
+  <span class="footer-divider">|</span>
+  <span class="footer-copy">© TextSpeeder <span id="currentYear"></span>. All rights reserved.</span>
+  <span class="footer-divider">|</span>
+  </nav>
+
+</footer>
+
+<script>
+  // 🔧 Auto-update footer year
+  document.addEventListener("DOMContentLoaded", () => {
+    const yearSpan = document.getElementById("currentYear");
+    if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+  });
+</script>
+
   <!-- PRIVATE CONTROL LAYER -->
   <section id="privateControlLayer">
     <div class="private-grid">
       <div class="flex items-center gap-2">
         <span class="text-sm">Mode:</span>
-        <select id="modeSelectPrivate" class="p-2 rounded bg-gray-100 flex-1">
+        <select id="modeSelectPrivate" class="p-2 rounded bg-gray-100 flex-1 text-black">
           <option value="flow">Flow</option>
           <option value="rsvp">RSVP</option>
         </select>
@@ -188,7 +261,7 @@
       <div class="flex items-center gap-2">
         <span class="text-sm">WPM:</span>
         <input id="wpmInputPrivate" type="number" min="50" max="2000" value="300"
-               class="w-24 p-2 rounded bg-gray-100" />
+               class="w-24 p-2 rounded bg-gray-100 text-black" />
         <input id="speedSliderPrivate" type="range" min="50" max="2000" value="300" class="flex-1" />
       </div>
 
@@ -412,19 +485,18 @@
     /* -------------------------
        Theme toggle
     ------------------------- */
-    function setDark(dark) {
-      if (dark) {
-        document.body.classList.add('bg-[#0b1120]', 'text-gray-100');
-      } else {
-        document.body.classList.remove('bg-[#0b1120]', 'text-gray-100');
-      }
-      localStorage.setItem('ts-dark', dark ? '1' : '0');
+    function setDark(isDark) {
+      document.body.classList.toggle('dark-mode', isDark);
+      document.body.classList.toggle('light-mode', !isDark);
+      localStorage.setItem('ts-dark', isDark ? '1' : '0');
     }
+
     const stored = localStorage.getItem('ts-dark');
-    setDark(stored === null ? true : stored === '1');
+    setDark(stored === '1');   // default = light if nothing stored
+
     themeToggle.addEventListener('click', () => {
-      const now = localStorage.getItem('ts-dark') === '1';
-      setDark(!now);
+      const nowDark = localStorage.getItem('ts-dark') === '1';
+      setDark(!nowDark);
     });
 
     /* -------------------------
@@ -432,7 +504,10 @@
     ------------------------- */
     flowPanel.classList.remove('hidden-by-js');
     rsvpPanel.classList.remove('hidden-by-js');
-    applyMode(mode); renderFlowWords(); renderRSVPIndex(0); startTicker();
+    applyMode(mode);
+    renderFlowWords();
+    renderRSVPIndex(0);
+    startTicker();
     sidebarOverlay.classList.add('hidden');
   </script>
 </body>

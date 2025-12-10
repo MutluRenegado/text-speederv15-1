@@ -1,14 +1,10 @@
 import React from "react";
 
-interface TextReaderProps {
-  currentWord: string;
-}
-
 /**
  * TextReader component
  * Displays the current word in a large, centered, dark-mode friendly style.
  */
-const TextReader: React.FC<TextReaderProps> = ({ currentWord }) => {
+export default function TextReader({ currentWord }) {
   return (
     <div
       style={{
@@ -28,6 +24,4 @@ const TextReader: React.FC<TextReaderProps> = ({ currentWord }) => {
       {currentWord || "—"}
     </div>
   );
-};
-
-export default TextReader;
+}

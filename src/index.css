@@ -1,62 +1,207 @@
-/* =========================
-   INTRO SCREEN
-========================= */
+/* =========================================================
+   TextSpeeder – Global Styles (Phase 1–6)
+   Layers • Slide-safe • Deterministic
+========================================================= */
 
-/* FULL APP BACKGROUND */
-.intro-bg {
+/* ---------- RESET ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Inter, Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- THEME TOKENS ---------- */
+:root {
+  --bg: #0f1117;
+  --text: #f5f7fa;
+  --muted: rgba(245, 247, 250, 0.75);
+  --card: rgba(15, 17, 23, 0.72);
+  --border: rgba(255, 255, 255, 0.14);
+  --primary: #7c5cff;
+  --primary2: #00e5ff;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f7fb;
+  --text: #101322;
+  --muted: rgba(16, 19, 34, 0.7);
+  --card: rgba(255, 255, 255, 0.78);
+  --border: rgba(16, 19, 34, 0.18);
+  --primary: #5a45ff;
+  --primary2: #00b7ff;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------- LAYERS (fixed order) ---------- */
+.layer {
   position: fixed;
   inset: 0;
-  background: #000;
+}
+
+.layer-bg {
+  z-index: 1;
+  background: radial-gradient(
+      1200px 600px at 20% 10%,
+      rgba(124, 92, 255, 0.22),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 500px at 80% 30%,
+      rgba(0, 229, 255, 0.14),
+      transparent 55%
+    ),
+    var(--bg);
+}
+
+.layer-overlay {
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0.55)
+  );
+  pointer-events: none;
+}
+
+.layer-texture {
+  z-index: 3;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.06) 1px,
+    transparent 1px
+  );
+  background-size: 18px 18px;
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+.layer-content {
+  z-index: 4;
+  position: relative;
+  inset: 0;
+}
+
+.layer-global-ui {
+  z-index: 5;
+  pointer-events: none;
+}
+
+.layer-a11y {
+  z-index: 6; /* accessibility always wins */
+  pointer-events: none;
+}
+
+/* ---------- GLOBAL UI ---------- */
+.global-ui {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  right: 14px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 2;
+  justify-content: space-between;
+  pointer-events: none;
 }
 
-/* SLIDE FRAME (RECTANGLE) */
-.intro-slide {
-  position: relative;
-
-  width: 60vw;          /* 👈 was 80vw → now 25% smaller */
-  max-width: 900px;     /* 👈 was 1200px → scaled down 25% */
-  aspect-ratio: 16 / 9; /* 👈 unchanged */
-
-  background: black;
-  overflow: hidden;
+.global-ui__brand {
+  pointer-events: none;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  opacity: 0.92;
 }
 
-/* VIDEO INSIDE SLIDE */
-.intro-video {
+/* theme chip should be clickable */
+.chip {
+  pointer-events: auto;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* ---------- A11Y RESERVED BAR (placeholder) ---------- */
+.a11y-bar {
+  position: fixed;
+  bottom: 14px;
+  left: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  opacity: 0.92;
+}
+
+.a11y-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.a11y-text {
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn.primary {
+  border: none;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  color: #0b0f2a;
+}
+
+.btn.ghost {
+  background: transparent;
+}
+
+/* ---------- PLACEHOLDERS ---------- */
+.screen-placeholder {
   position: absolute;
   inset: 0;
-
-  width: 80%;
-  height: 80%;
-
-  object-fit: contain;  /* 👈 keeps margins */
-  object-position: center;
-
-  z-index: 0;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 28px;
 }
 
-/* OVERLAY INSIDE SLIDE */
-.intro-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 1;
-}
-
-/* BUTTONS INSIDE SLIDE */
-.intro-content {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 24px;
-
-  z-index: 2;
-
-  display: flex;
-  gap: 16px;
-  justify-content: center;
+.screen-placeholder h2 {
+  margin-bottom: 8px;
 }

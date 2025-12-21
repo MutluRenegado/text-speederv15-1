@@ -1,0 +1,107 @@
+textspeeder/
+│
+├── index.html
+├── package.json
+├── vite.config.js
+├── README.md
+│
+├── public/
+│   ├── intro/
+│   │   ├── intro.mp4
+│   │   └── poster.jpg
+│   │
+│   ├── background/
+│   │   ├── hero.jpg
+│   │   └── hero-dark.jpg
+│   │
+│   ├── icons/
+│   │   └── accessibility.svg
+│   │
+│   └── fonts/
+│
+├── src/
+│   │
+│   ├── main.jsx
+│   ├── App.jsx
+│   │
+│   ├── layers/                         ← 🧱 6-LAYER SYSTEM
+│   │   │
+│   │   ├── layer1-background/
+│   │   │   ├── Background.jsx
+│   │   │   └── background.css
+│   │   │
+│   │   ├── layer2-overlay/
+│   │   │   ├── Overlay.jsx
+│   │   │   └── overlay.css
+│   │   │
+│   │   ├── layer3-texture/
+│   │   │   ├── Texture.jsx
+│   │   │   └── texture.css
+│   │   │
+│   │   ├── layer4-content/
+│   │   │   ├── ContentHost.jsx
+│   │   │   └── content.css
+│   │   │
+│   │   ├── layer5-global-ui/
+│   │   │   ├── GlobalUI.jsx
+│   │   │   └── global-ui.css
+│   │   │
+│   │   └── layer6-accessibility/
+│   │       ├── AccessibilityLayer.jsx
+│   │       ├── AccessibilityPanel.jsx
+│   │       ├── accessibility.css
+│   │       └── accessibilityState.js
+│   │
+│   ├── pages/                          ← 🧭 SCREENS / FLOWS
+│   │   │
+│   │   ├── Intro/
+│   │   │   ├── IntroScreen.jsx
+│   │   │   └── intro.css
+│   │   │
+│   │   ├── Welcome/
+│   │   │   ├── WelcomeScreen.jsx
+│   │   │   └── welcome.css
+│   │   │
+│   │   ├── Input/
+│   │   │   ├── InputPage.jsx
+│   │   │   └── input.css
+│   │   │
+│   │   ├── Reader/
+│   │   │   ├── ModernReader.jsx
+│   │   │   ├── ClassicReader.jsx
+│   │   │   └── reader.css
+│   │   │
+│   │   └── End/
+│   │       ├── EndScreen.jsx
+│   │       └── end.css
+│   │
+│   ├── state/                          ← 🧠 GLOBAL STATE
+│   │   ├── appState.js                 // intro | welcome | input | reader | end
+│   │   ├── themeState.js               // light / dark
+│   │   ├── accessibilityState.js
+│   │   └── sessionState.js
+│   │
+│   ├── styles/                         ← 🎨 GLOBAL STYLES
+│   │   ├── reset.css
+│   │   ├── globals.css                 // z-index + base layout
+│   │   ├── theme.css                   // CSS variables
+│   │   └── accessibility.css
+│   │
+│   ├── utils/
+│   │   ├── storage.js                  // localStorage helpers
+│   │   ├── constants.js
+│   │   └── helpers.js
+│   │
+│   ├── services/                       ← 🔌 BACKEND (LATER)
+│   │   ├── firebase/
+│   │   │   ├── firebaseConfig.js
+│   │   │   ├── auth.js
+│   │   │   └── firestore.js
+│   │   │
+│   │   └── stripe/
+│   │       ├── stripeClient.js
+│   │       └── credits.js
+│   │
+│   └── assets/                         ← optional local assets
+│
+└── .gitignore

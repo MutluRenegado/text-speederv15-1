@@ -1,0 +1,11 @@
+.layer {
+  position: fixed;
+  inset: 0;
+}
+
+.layer-bg { z-index: 0; }
+.layer-overlay { z-index: 1; }
+.layer-texture { z-index: 2; }
+.layer-content { z-index: 3; }
+.layer-global-ui { z-index: 4; }
+.layer-accessibility { z-index: 5; }

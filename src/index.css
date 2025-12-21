@@ -1,0 +1,62 @@
+/* =========================
+   INTRO SCREEN
+========================= */
+
+/* FULL APP BACKGROUND */
+.intro-bg {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+/* SLIDE FRAME (RECTANGLE) */
+.intro-slide {
+  position: relative;
+
+  width: 60vw;          /* 👈 was 80vw → now 25% smaller */
+  max-width: 900px;     /* 👈 was 1200px → scaled down 25% */
+  aspect-ratio: 16 / 9; /* 👈 unchanged */
+
+  background: black;
+  overflow: hidden;
+}
+
+/* VIDEO INSIDE SLIDE */
+.intro-video {
+  position: absolute;
+  inset: 0;
+
+  width: 80%;
+  height: 80%;
+
+  object-fit: contain;  /* 👈 keeps margins */
+  object-position: center;
+
+  z-index: 0;
+}
+
+/* OVERLAY INSIDE SLIDE */
+.intro-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+/* BUTTONS INSIDE SLIDE */
+.intro-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+
+  z-index: 2;
+
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}

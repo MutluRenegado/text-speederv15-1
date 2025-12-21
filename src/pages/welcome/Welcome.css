@@ -1,0 +1,19 @@
+.welcome-panel {
+  background: var(--panel-bg);
+  color: var(--text-color);
+  padding: 48px;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 420px;
+}
+
+.welcome-panel button {
+  margin-top: 24px;
+  padding: 12px 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: var(--button-bg);
+  color: var(--button-text);
+  font-weight: 600;
+}

@@ -1,0 +1,26 @@
+/* =========================
+   THEME VARIABLES
+========================= */
+
+:root {
+  --panel-bg: rgba(20, 20, 20, 0.85);
+  --text-color: #ffffff;
+  --button-bg: #ffd400;
+  --button-text: #000000;
+}
+
+/* DARK MODE */
+[data-theme="dark"] {
+  --panel-bg: rgba(20, 20, 20, 0.85);
+  --text-color: #ffffff;
+  --button-bg: #ffd400;
+  --button-text: #000000;
+}
+
+/* LIGHT MODE */
+[data-theme="light"] {
+  --panel-bg: rgba(255, 255, 255, 0.92);
+  --text-color: #000000;
+  --button-bg: #111111;
+  --button-text: #ffffff;
+}

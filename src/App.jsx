@@ -9,12 +9,10 @@ import ContentHost from "./layers/layer4-content/ContentHost";
 import GlobalUI from "./layers/layer5-global-ui/GlobalUI";
 import AccessibilityLayer from "./layers/layer6-accessibility/AccessibilityLayer";
 
-import IntroScreen from "./pages/Intro/Intro";
-import WelcomeScreen from "./pages/Welcome/WelcomeScreen";
-
 import { getInitialTheme, applyTheme } from "./state/themeState";
 
 export default function App() {
+  // intro → welcome → app/test
   const [view, setView] = useState("intro");
   const [theme, setTheme] = useState(getInitialTheme());
 
@@ -24,36 +22,19 @@ export default function App() {
 
   return (
     <>
-      {/* LAYERS ONLY AFTER INTRO */}
-      {view !== "intro" && (
-        <>
-          <Background />
-          <Overlay />
-          <Texture />
-        </>
-      )}
+      {/* GLOBAL LAYERS (always present) */}
+      <Background />
+      <Overlay />
+      <Texture />
 
-      {/* FLOW */}
-      {view === "intro" && (
-        <IntroScreen onContinue={() => setView("welcome")} />
-      )}
+      {/* SINGLE CONTENT ORCHESTRATOR */}
+      <ContentHost
+        view={view}
+        onNavigate={setView}
+        theme={theme}
+      />
 
-      {view === "welcome" && (
-        <WelcomeScreen
-          onStartApp={() => setView("input")}
-          onTestApp={() => setView("input")}
-          onDocs={() =>
-            window.open("https://textspeeder.online/docs", "_blank")
-          }
-          onLogin={() => alert("Login will be added")}
-        />
-      )}
-
-      {view !== "intro" && view !== "welcome" && (
-        <ContentHost view={view} setView={setView} />
-      )}
-
-      {/* TOP / FLOATING UI */}
+      {/* GLOBAL UI */}
       <GlobalUI theme={theme} setTheme={setTheme} />
       <AccessibilityLayer />
     </>

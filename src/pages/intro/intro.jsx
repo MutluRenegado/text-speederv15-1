@@ -1,44 +1,40 @@
+import Slide from "../../components/Slide/Slide";
 import "./intro.css";
-import { useEffect, useState } from "react";
 
-export default function IntroScreen({ onContinue }) {
-  const [showVideo, setShowVideo] = useState(false);
+export default function Intro({ onContinue, theme }) {
+  // 🔒 Normalize theme (dark is default)
+  const safeTheme = theme === "light" ? "light" : "dark";
 
-  useEffect(() => {
-    const id =
-      "requestIdleCallback" in window
-        ? requestIdleCallback(() => setShowVideo(true))
-        : setTimeout(() => setShowVideo(true), 300);
-
-    return () => {
-      if (typeof id === "number") clearTimeout(id);
-    };
-  }, []);
+  // 🔁 Pick correct video
+  const videoSrc =
+    safeTheme === "light"
+      ? "/intro/input-light.mp4"
+      : "/intro/input-dark.mp4";
 
   return (
-    <div className="intro-bg">
-      {showVideo && (
+    <Slide>
+      <div className={`intro-bg ${safeTheme}`}>
         <video
+          key={safeTheme}        // force reload when theme changes
           className="intro-video"
-          src="/intro/intro.mp4"
-          poster="/intro/poster.jpg"
+          src={videoSrc}
           autoPlay
           muted
+          loop
           playsInline
-          preload="none"
         />
-      )}
 
-      <div className="intro-overlay" />
+        <div className="intro-overlay" />
 
-      <div className="intro-content">
-        <button className="primary" onClick={onContinue}>
-          Start
-        </button>
-        <button className="secondary" onClick={onContinue}>
-          Skip Intro
-        </button>
+        <div className="intro-content">
+          <button className="primary" onClick={onContinue}>
+            Start
+          </button>
+          <button className="secondary" onClick={onContinue}>
+            Skip Intro
+          </button>
+        </div>
       </div>
-    </div>
+    </Slide>
   );
 }

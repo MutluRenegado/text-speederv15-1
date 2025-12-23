@@ -1,0 +1,244 @@
+🧱 TextSpeeder — Phase → Folder / File Mapping (Authoritative)
+
+This shows exactly which folders/files belong to each phase, so nothing is abstract.
+
+🔹 PHASE 0 — Foundations
+
+Purpose: tooling & bootstrapping
+You already have this
+
+package.json
+vite.config.js
+index.html
+
+
+✔ No UI logic
+✔ No Firebase / Stripe
+✔ Never touched again
+
+🔹 PHASE 1 — Global App Shell
+
+Purpose: app exists even with no screens
+
+src/
+├── main.jsx        ← React entry
+├── App.jsx         ← single orchestration point
+└── index.css       ← global reset + layers + rules
+
+
+Rules enforced here
+
+No layout assumptions
+
+No centering hacks
+
+No screen-specific CSS
+
+🔹 PHASE 2 — Layer Architecture (Global, Always-On)
+
+Purpose: prevent chaos forever
+
+src/layers/
+├── layer1-background/
+│   └── Background.jsx
+├── layer2-overlay/
+│   └── Overlay.jsx
+├── layer3-texture/
+│   └── Texture.jsx
+├── layer4-content/
+│   └── ContentHost.jsx
+├── layer5-global-ui/
+│   └── GlobalUI.jsx
+└── layer6-accessibility/
+    └── AccessibilityLayer.jsx
+
+
+Golden rule
+
+Screens live ONLY inside ContentHost
+
+🔹 PHASE 3 — Slide System (Core UI Contract)
+
+Purpose: lock rectangular slide behavior
+
+src/components/
+└── Slide/
+    ├── Slide.jsx
+    └── slide.css
+
+
+Slide.jsx responsibilities
+
+width-based sizing
+
+aspect-ratio (16:9)
+
+centered frame
+
+margins preserved
+
+nothing else
+
+Every screen must use <Slide />.
+
+🔹 PHASE 4 — Intro Screen
+
+Purpose: first user experience
+
+src/pages/intro/
+├── Intro.jsx
+└── intro.css
+
+
+Uses
+
+<Slide />
+
+intro video
+
+Start / Skip buttons
+
+Does NOT
+
+save state
+
+use Firebase
+
+stretch fullscreen
+
+🔹 PHASE 5 — Welcome Screen
+
+Purpose: intent selection
+
+src/pages/welcome/
+├── Welcome.jsx
+└── welcome.css
+
+
+Buttons
+
+Start App
+
+Test App
+
+Docs (external)
+
+Login (placeholder)
+
+Still pure UI, no logic.
+
+🔹 PHASE 6 — Local Navigation Logic
+
+Purpose: app flow without routing
+
+src/App.jsx
+src/layers/layer4-content/ContentHost.jsx
+
+
+State
+
+view = intro | welcome | app | test
+
+
+No URLs. No router. No history.
+
+🔹 PHASE 7 — Core TextSpeeder App (Local Only)
+
+Purpose: real value
+
+src/pages/app/
+├── AppScreen.jsx
+├── reader/
+│   ├── Reader.jsx
+│   ├── FlowReader.jsx
+│   └── RSVPReader.jsx
+└── app.css
+
+
+What lives here
+
+text input
+
+reading modes
+
+session rendering
+
+What does NOT
+
+saving
+
+accounts
+
+limits
+
+🔹 PHASE 8 — Accessibility & Global UI
+
+Purpose: non-negotiable usability
+
+src/layers/layer6-accessibility/
+└── AccessibilityLayer.jsx
+
+
+Optional:
+
+src/layers/layer5-global-ui/
+└── ThemeToggle.jsx
+
+
+Accessibility always wins z-index.
+
+🔹 PHASE 9 — Firebase Integration (Later, Plug-In Only)
+
+Purpose: backend without UI rewrite
+
+src/services/
+├── firebase/
+│   ├── firebase.config.js
+│   ├── auth.service.js
+│   ├── db.service.js
+│   └── usage.service.js
+└── context/
+    ├── AuthContext.jsx
+    └── UsageContext.jsx
+
+
+UI → Context → Services
+Never UI → Firebase directly.
+
+🔹 PHASE 10 — Stripe Integration (Later)
+src/services/
+└── stripe/
+    ├── stripe.config.js
+    ├── plans.config.js
+    └── checkout.service.js
+
+
+No slide changes. No layout changes.
+
+🔀 FLOW DIAGRAM (TEXTUAL, CLEAR)
+App.jsx
+ ├─ Background
+ ├─ Overlay
+ ├─ Texture
+ ├─ ContentHost
+ │    ├─ Intro (Slide)
+ │    ├─ Welcome (Slide)
+ │    ├─ App (Slide)
+ │    └─ Test (Slide)
+ ├─ GlobalUI
+ └─ AccessibilityLayer
+
+
+Slide is the invariant unit.
+
+🔒 FINAL LOCKED RULES
+
+Slides are rectangular — always
+
+Width is the base — always
+
+Layers never change order
+
+Services never touch layout
+
+UI is finished before Firebase & Stripe

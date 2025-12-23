@@ -1,0 +1,376 @@
+🧭 TextSpeeder — Full Clean App Creation Flow
+
+Version: 15.1.x
+Scope: From zero → local app → integrations → production
+Philosophy: Stable UI first, services later
+
+PHASE 0 — FOUNDATIONS (ONE-TIME SETUP)
+Goal
+
+Create a stable, predictable frontend foundation that never needs to be rewritten.
+
+Actions
+
+Initialize project with Vite + React
+
+Install dependencies
+
+Confirm Node / npm versions
+
+Lock basic scripts:
+
+npm run dev
+
+npm run build
+
+Do not add Firebase, Stripe, or routing yet
+
+Output
+
+App runs locally
+
+Clean terminal
+
+No external dependencies
+
+PHASE 1 — GLOBAL APP SHELL
+Goal
+
+Define how the app behaves before any screen exists.
+
+Actions
+
+Create index.html as a minimal app shell
+
+Create src/index.css for:
+
+global reset
+
+background
+
+layer z-index rules
+
+accessibility priority
+
+Create main.jsx to mount React
+
+Create App.jsx as the single orchestration point
+
+Key Rule
+
+Nothing in the app should “accidentally” affect layout.
+
+Output
+
+Black background
+
+Empty app renders correctly
+
+No layout assumptions
+
+PHASE 2 — LAYER ARCHITECTURE (GLOBAL)
+Goal
+
+Prevent UI chaos by enforcing explicit layering.
+
+Layers (Always Present)
+
+Background
+
+Overlay
+
+Texture
+
+Content Host
+
+Global UI
+
+Accessibility
+
+Actions
+
+Create folders for each layer
+
+Each layer renders a single predictable container
+
+Z-index is fixed and documented
+
+Accessibility layer always on top
+
+Output
+
+App has structure even before content
+
+Future features cannot break accessibility
+
+PHASE 3 — SLIDE SYSTEM (CORE UI MODEL)
+Goal
+
+Lock the rectangular slide concept that defines TextSpeeder.
+
+Core Rules
+
+Slides are rectangular, not fullscreen
+
+Width is the base reference
+
+Aspect ratio defines height
+
+Empty space around slide is intentional
+
+App background remains visible
+
+Actions
+
+Define a reusable slide frame
+
+Center slide in viewport
+
+Use aspect-ratio
+
+Prevent stretching
+
+Output
+
+Stable visual identity
+
+All screens feel consistent
+
+Layout is future-proof
+
+PHASE 4 — INTRO SCREEN
+Goal
+
+Create the first user experience without side effects.
+
+Behavior
+
+First screen shown
+
+Video displayed inside slide
+
+Video:
+
+object-fit: contain
+
+no scaling surprises
+
+Buttons inside slide, near bottom:
+
+Start
+
+Skip Intro
+
+Logic
+
+Both buttons move to Welcome screen
+
+No routing
+
+No persistence yet
+
+Output
+
+Smooth intro
+
+No layout jumps
+
+Clear transition
+
+PHASE 5 — WELCOME SCREEN
+Goal
+
+Give users clear intent choices.
+
+Actions (inside slide)
+
+Start the App
+
+Test the App
+
+Go to Docs (external)
+
+Login (placeholder)
+
+Rules
+
+Same slide frame as Intro
+
+No auth logic yet
+
+No backend calls
+
+Output
+
+User understands what to do next
+
+App feels intentional
+
+PHASE 6 — CONTENT HOST & LOCAL NAVIGATION
+Goal
+
+Control app flow without URLs or routing.
+
+Logic
+
+Use React state:
+
+view = intro | welcome | app | test
+
+
+Content Host renders the correct screen
+
+No react-router
+
+Output
+
+Predictable navigation
+
+Zero routing complexity
+
+Easy to debug
+
+PHASE 7 — LOCAL APP FUNCTIONALITY (CORE)
+Goal
+
+Implement TextSpeeder’s actual reading logic locally.
+
+Actions
+
+Input text
+
+Process text into reading units
+
+Display reading session inside slide
+
+Allow test/demo mode
+
+No saving yet
+
+Output
+
+App is usable without internet
+
+Core value is proven
+
+PHASE 8 — ACCESSIBILITY & GLOBAL UI
+Goal
+
+Ensure the app is usable by everyone.
+
+Actions
+
+Add accessibility toggle
+
+Ensure it is never blocked
+
+Add global UI controls (theme, etc.)
+
+Rules
+
+Accessibility layer always wins
+
+No overlay can block it
+
+Output
+
+Compliance-ready UI
+
+Ethical and future-proof
+
+PHASE 9 — FIREBASE INTEGRATION (AFTER UI IS STABLE)
+Goal
+
+Add backend without breaking UI.
+
+Order
+
+Firebase config only
+
+Firebase Auth
+
+Firestore usage tracking
+
+Tier logic (Free / Standard / Premium)
+
+Rules
+
+UI does not call Firebase directly
+
+Use services + context
+
+Feature-gate, don’t rewrite
+
+Output
+
+App remains stable
+
+Backend is modular
+
+PHASE 10 — STRIPE INTEGRATION
+Goal
+
+Enable monetization cleanly.
+
+Actions
+
+Define plans
+
+Create checkout service
+
+Connect tiers to usage
+
+No UI rewrite
+
+Output
+
+Monetization without UI debt
+
+PHASE 11 — PRODUCTION HARDENING
+Goal
+
+Prepare for real users.
+
+Actions
+
+Error handling
+
+Loading states
+
+Empty states
+
+Version stamping
+
+Build optimization
+
+Output
+
+Professional-grade app
+
+PHASE 12 — DEPLOYMENT & CI/CD
+Goal
+
+Ship safely.
+
+Actions
+
+GitHub repo
+
+Firebase Hosting
+
+Optional auto-deploy
+
+Version tags
+
+Output
+
+Repeatable releases
+
+Confidence in changes
+
+FINAL PRINCIPLE (MOST IMPORTANT)
+
+UI stability comes before services.
+Services plug in — they do not dictate layout.
+
+You followed this correctly.

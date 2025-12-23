@@ -1,17 +1,33 @@
-// src/layers/layer4-content/ContentHost.jsx
-
 import "./ContentHost.css";
 
-export default function ContentHost({ view, setView }) {
+import Intro from "../../pages/Intro/Intro";
+import WelcomeScreen from "../../pages/Welcome/WelcomeScreen";
+
+export default function ContentHost({ view, onNavigate, theme }) {
   return (
     <div className="app-frame">
       {/* MAIN CONTENT */}
       <main className="main-content">
-        {/* TEMP PLACEHOLDER — replace with Input / Reader */}
-        <h1 style={{ color: "white" }}>Main App Loaded</h1>
-        <p style={{ color: "#a3a7b7" }}>
-          View: {view}
-        </p>
+        {view === "intro" && (
+          <Intro
+            theme={theme}
+            onContinue={() => onNavigate("welcome")}
+          />
+        )}
+
+        {view === "welcome" && (
+          <WelcomeScreen
+            onStart={() => onNavigate("app")}
+            onTest={() => onNavigate("test")}
+          />
+        )}
+
+        {view === "app" && (
+          <>
+            <h1 style={{ color: "white" }}>Main App Loaded</h1>
+            <p style={{ color: "#a3a7b7" }}>View: {view}</p>
+          </>
+        )}
       </main>
 
       {/* FOOTER */}
@@ -20,9 +36,7 @@ export default function ContentHost({ view, setView }) {
       </footer>
 
       {/* ALWAYS-VISIBLE HANDLE */}
-      <div className="asset-handle">
-        ☰
-      </div>
+      <div className="asset-handle">☰</div>
     </div>
   );
 }
